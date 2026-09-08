@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
     private void ActualizarUIObjetos()
     {
         if (textoObjetos != null)
-            textoObjetos.text = $"Materiales: {objetosRecolectados}/{totalObjetosNecesarios}";
+            textoObjetos.text = $"Troncos: {objetosRecolectados}/{totalObjetosNecesarios}";
     }
 
     public bool PuenteEstaHabilitado() => puenteHabilitado;
