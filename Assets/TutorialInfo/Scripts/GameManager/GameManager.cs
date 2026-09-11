@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro; // si no usas TextMeshPro, cambiá por UnityEngine.UI.Text
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -119,8 +119,6 @@ public class GameManager : MonoBehaviour
 
     public bool TieneFusible() => tieneFusible;
 
-    // llamado desde el botón/interacción de la torre (tecla E)
-    // si tiene el fusible, gana. Si no, muestra aviso
     public void IntentarEscapar()
     {
         if (partidaTerminada) return;
@@ -173,9 +171,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("DERROTA: " + motivo);
         OnDerrota?.Invoke();
-
-        // tanto si se acabó el tiempo como si te atrapó el bicho, se carga
-        // la misma escena de derrota (el "diario" donde aparecés muerto).
         SceneManager.LoadScene(escenaDerrota);
     }
 
