@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4052695221491436218}
   - component: {fileID: 3393744239527092794}
   m_Layer: 0
-  m_Name: puerta
+  m_Name: Marco
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,9 +29,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 347542490541900867}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.68671465, y: -3.6099997, z: 2.044365}
-  m_LocalScale: {x: 0.66238576, y: 0.94311666, z: 1}
+  m_LocalScale: {x: 1.5000001, y: 2, z: 1.0937456}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -467,7 +467,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 21
+  m_VersionIndex: 39
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
