@@ -6747,6 +6747,17 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!114 &201218547 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
+  m_PrefabInstance: {fileID: 884075440}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ca4373fa4638247b7f351d23a6fcc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManeger
 --- !u!1001 &201240409
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11078,6 +11089,14 @@ PrefabInstance:
     - target: {fileID: 2053266296885584712, guid: 9dae8121859577349ace088e8379a0c7, type: 3}
       propertyPath: m_Name
       value: boton
+      objectReference: {fileID: 0}
+    - target: {fileID: 7755262022779518823, guid: 9dae8121859577349ace088e8379a0c7, type: 3}
+      propertyPath: OnInteractuar.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 201218547}
+    - target: {fileID: 7755262022779518823, guid: 9dae8121859577349ace088e8379a0c7, type: 3}
+      propertyPath: OnInteractuar.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: IntentarEscapar
       objectReference: {fileID: 0}
     - target: {fileID: 8755564378142415238, guid: 9dae8121859577349ace088e8379a0c7, type: 3}
       propertyPath: m_LocalPosition.x
