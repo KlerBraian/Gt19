@@ -5629,7 +5629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.89
+      value: 39.69
       objectReference: {fileID: 0}
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5637,7 +5637,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalPosition.z
+<<<<<<< Updated upstream:Assets/maps/map.unity
       value: -10.25
+=======
+      value: -35.67
+>>>>>>> Stashed changes:Assets/maps/Game.unity
       objectReference: {fileID: 0}
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalRotation.w

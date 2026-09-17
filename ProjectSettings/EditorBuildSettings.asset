@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu/Menu.unity
     guid: 1015d09d2db5de747a5ce85c4c9f5893
   - enabled: 1
-    path: Assets/maps/map experimentar.unity
-    guid: 0349e81b01a8761489d7b56112e236d6
+    path: Assets/maps/Game.unity
+    guid: 4626d2b1724f35647b3ebd71670f7fd0
   - enabled: 1
     path: Assets/Scenes/Escenas Victoria Y Derrota/Victoria.unity
     guid: 3dd74caa005f8fe42a555d623ce10fec
