@@ -65,6 +65,18 @@ MonoBehaviour:
       - rid: 2142904469512781833
       - rid: 2142904469512781834
       - rid: 2142904469512781835
+      - rid: 2504463660799492096
+      - rid: 2504463660799492097
+      - rid: 2504463660799492098
+      - rid: 2504463660799492099
+      - rid: 2504463660799492100
+      - rid: 2504463660799492101
+      - rid: 2504463660799492102
+      - rid: 2504463660799492103
+      - rid: 2504463660799492104
+      - rid: 2504463660799492105
+      - rid: 2504463660799492106
+      - rid: 2504463660799492107
     m_RuntimeSettings:
       m_List: []
   m_AssetVersion: 9
@@ -98,6 +110,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 2142904469512781824
+    - rid: 2504463660799492096
       type: {class: RayTracingRenderPipelineResources, ns: UnityEngine.Rendering.UnifiedRayTracing, asm: Unity.UnifiedRayTracing.Runtime}
       data:
         m_Version: 1
@@ -111,11 +124,13 @@ MonoBehaviour:
         m_RestructureBvh: {fileID: 7200000, guid: 56641cb88dcb31a4398a4997ef7a7a8c, type: 3}
         m_Scatter: {fileID: 7200000, guid: a2eaeefdac4637a44b734e85b7be9186, type: 3}
     - rid: 2142904469512781825
+    - rid: 2504463660799492097
       type: {class: ScreenSpaceAmbientOcclusionPersistentResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_Shader: {fileID: 4800000, guid: 0849e84e3d62649e8882e9d6f056a017, type: 3}
         m_Version: 0
     - rid: 2142904469512781826
+    - rid: 2504463660799492098
       type: {class: ScreenSpaceAmbientOcclusionDynamicResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_BlueNoise256Textures:
@@ -128,11 +143,13 @@ MonoBehaviour:
         - {fileID: 2800000, guid: 56a77a3e8d64f47b6afe9e3c95cb57d5, type: 3}
         m_Version: 0
     - rid: 2142904469512781827
+    - rid: 2504463660799492099
       type: {class: OnTilePostProcessResource, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_Version: 0
         m_UberPostShader: {fileID: 4800000, guid: fe4f13c1004a07d4ea1e30bfd0326d9e, type: 3}
     - rid: 2142904469512781828
+    - rid: 2504463660799492100
       type: {class: PostProcessData/TextureResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         blueNoise16LTex: []
@@ -151,12 +168,14 @@ MonoBehaviour:
         smaaSearchTex: {fileID: 2800000, guid: 51eee22c2a633ef4aada830eed57c3fd, type: 3}
         m_TexturesResourcesVersion: 0
     - rid: 2142904469512781829
+    - rid: 2504463660799492101
       type: {class: UniversalRenderPipelineRuntimeXRResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         m_xrOcclusionMeshPS: {fileID: 4800000, guid: 4431b1f1f743fbf4eb310a967890cbea, type: 3}
         m_xrMirrorViewPS: {fileID: 4800000, guid: d5a307c014552314b9f560906d708772, type: 3}
         m_xrMotionVector: {fileID: 4800000, guid: f89aac1e4f84468418fe30e611dff395, type: 3}
     - rid: 2142904469512781830
+    - rid: 2504463660799492102
       type: {class: PostProcessData/ShaderResources, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         stopNanPS: {fileID: 4800000, guid: 1121bb4e615ca3c48b214e79e841e823, type: 3}
@@ -177,6 +196,7 @@ MonoBehaviour:
         finalPostPassPS: {fileID: 4800000, guid: c49e63ed1bbcb334780a3bd19dfed403, type: 3}
         m_ShaderResourcesVersion: 0
     - rid: 2142904469512781831
+    - rid: 2504463660799492103
       type: {class: URPReflectionProbeSettings, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Universal.Runtime}
       data:
         version: 1
@@ -186,6 +206,11 @@ MonoBehaviour:
       data:
         m_DefaultSettingsVolumeProfile: {fileID: 11400000, guid: eda47df5b85f4f249abf7abd73db2cb2, type: 2}
     - rid: 2142904469512781833
+    - rid: 2504463660799492104
+      type: {class: UniversalRenderPipelineEditorAssets, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.Runtime}
+      data:
+        m_DefaultSettingsVolumeProfile: {fileID: 11400000, guid: eda47df5b85f4f249abf7abd73db2cb2, type: 2}
+    - rid: 2504463660799492105
       type: {class: VrsRenderPipelineRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_TextureComputeShader: {fileID: 7200000, guid: cacb30de6c40c7444bbc78cb0a81fd2a, type: 3}
@@ -217,6 +242,11 @@ MonoBehaviour:
       data:
         m_version: 0
     - rid: 2142904469512781835
+    - rid: 2504463660799492106
+      type: {class: RenderingDebuggerRuntimeResources, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
+      data:
+        m_version: 0
+    - rid: 2504463660799492107
       type: {class: LightmapSamplingSettings, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}
       data:
         m_Version: 1

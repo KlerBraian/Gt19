@@ -5,6 +5,7 @@ PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
   productGUID: f097556c153e7a542a678852c6ec387e
+  productGUID: 7afa76de9ae947c43acd359a1434b9da
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -14,6 +15,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: DefaultCompany
   productName: Parcial motores
+  productName: Grupo t19
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -847,6 +849,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: Parcial motores
+  metroPackageName: Grupo t19
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
@@ -854,6 +857,7 @@ PlayerSettings:
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Parcial motores
+  metroApplicationDescription: Grupo t19
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -929,6 +933,13 @@ PlayerSettings:
   qualitySettingsNames: []
   projectName: Parcial motores
   organizationId: unity_7bf4937d6456b14032d6
+  activeInputHandler: 1
+  windowsGamepadBackendHint: 0
+  cloudProjectId: 1cc000bb-72b4-479f-b6b9-ed91b3531b15
+  framebufferDepthMemorylessMode: 0
+  qualitySettingsNames: []
+  projectName: Grupo t19
+  organizationId: unity_4e7c1ee2f02eeb44b33b
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

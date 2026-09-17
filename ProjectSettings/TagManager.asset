@@ -6,11 +6,14 @@ TagManager:
   tags:
   - Rope
   - Plank
+  serializedVersion: 2
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
   - interactable
+  - 
   - Water
   - UI
   - 
@@ -52,3 +55,27 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
