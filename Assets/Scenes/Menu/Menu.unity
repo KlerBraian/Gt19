@@ -536,7 +536,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9746be285d9a54690be46dc29eb7fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuPrincipal
-  escenaDeJuego: map experimentar
+  escenaDeJuego: Game
 --- !u!1 &1416705420
 GameObject:
   m_ObjectHideFlags: 0
