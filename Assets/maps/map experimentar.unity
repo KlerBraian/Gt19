@@ -31792,6 +31792,10 @@ PrefabInstance:
       propertyPath: textoPrompt
       value: 
       objectReference: {fileID: 1638634497}
+    - target: {fileID: 3663259144851542091, guid: 381da987d6daf9e41abbe40760cc3c26, type: 3}
+      propertyPath: origenRaycast
+      value: 
+      objectReference: {fileID: 1459979912}
     - target: {fileID: 6705514554865426194, guid: 381da987d6daf9e41abbe40760cc3c26, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -61334,6 +61338,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 43073585412550523, guid: e5057f08ff1a93e4dbb66ee427dc137f, type: 3}
   m_PrefabInstance: {fileID: 1453997119}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1459979912 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8452496059534038800, guid: 381da987d6daf9e41abbe40760cc3c26, type: 3}
+  m_PrefabInstance: {fileID: 1013164357}
   m_PrefabAsset: {fileID: 0}
 --- !u!43 &1492180268
 Mesh:
