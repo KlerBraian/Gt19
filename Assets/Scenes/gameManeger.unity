@@ -24253,55 +24253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1 &2042059336
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2042059338}
-  - component: {fileID: 2042059337}
-  m_Layer: 0
-  m_Name: controladorPuente
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2042059337
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2042059336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 239bac7eb5186b04b924412ae1c8dcff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Puente
-  puenteConstruido: {fileID: 1431803670}
-  bloqueoDePaso: {fileID: 0}
-  sonidoConstruccion: {fileID: 0}
-  animator: {fileID: 0}
-  nombreTriggerAnimacion: Construir
---- !u!4 &2042059338
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2042059336}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 87.17957, y: 0.00001, z: -72.68265}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &294081043230735580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24364,7 +24315,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4422089465393339309, guid: ad5d67f226278cf4d9c9fd9993348ead, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5318567347779121600, guid: ad5d67f226278cf4d9c9fd9993348ead, type: 3}
       propertyPath: m_Mesh
@@ -24376,7 +24327,7 @@ PrefabInstance:
       objectReference: {fileID: 1676809936}
     - target: {fileID: 8138642730198528241, guid: ad5d67f226278cf4d9c9fd9993348ead, type: 3}
       propertyPath: m_VersionIndex
-      value: 1436
+      value: 1439
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -24756,6 +24707,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0f8145fcf91f9e4c93797a20b42f292, type: 3}
+--- !u!1001 &9001283042383993284
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2506900912927097260, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: puenteConstruido
+      value: 
+      objectReference: {fileID: 1431803670}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 87.17957
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.00001
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -72.68265
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593180887009793176, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8737788966834029985, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
+      propertyPath: m_Name
+      value: controladorPuente
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e5d93b3351aff74ab8688753aa17316, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -24769,7 +24781,7 @@ SceneRoots:
   - {fileID: 6650615138146424204}
   - {fileID: 7443297071527885074}
   - {fileID: 1910008812}
-  - {fileID: 2042059338}
+  - {fileID: 9001283042383993284}
   - {fileID: 1770994696421357352}
   - {fileID: 1250548125}
   - {fileID: 1266923404}
