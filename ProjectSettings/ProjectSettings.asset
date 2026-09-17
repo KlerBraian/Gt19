@@ -4,7 +4,6 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: f097556c153e7a542a678852c6ec387e
   productGUID: 7afa76de9ae947c43acd359a1434b9da
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
@@ -14,7 +13,6 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: Parcial motores
   productName: Grupo t19
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -848,7 +846,6 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Parcial motores
   metroPackageName: Grupo t19
   metroPackageVersion: 
   metroCertificatePath: 
@@ -856,7 +853,6 @@ PlayerSettings:
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: Parcial motores
   metroApplicationDescription: Grupo t19
   wsaImages: {}
   metroTileShortName: 
@@ -926,13 +922,6 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 2
-  windowsGamepadBackendHint: 0
-  cloudProjectId: 86499eda-ceef-46f3-915e-beed865eefad
-  framebufferDepthMemorylessMode: 0
-  qualitySettingsNames: []
-  projectName: Parcial motores
-  organizationId: unity_7bf4937d6456b14032d6
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
   cloudProjectId: 1cc000bb-72b4-479f-b6b9-ed91b3531b15
