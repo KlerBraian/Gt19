@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream:TutorialInfo/Scripts/InteractiveDoor.cs
 using UnityEngine;
 
 public class InteractiveDoor : MonoBehaviour
@@ -52,3 +53,58 @@ public class InteractiveDoor : MonoBehaviour
         }
     }
 }
+=======
+using UnityEngine;
+
+public class InteractiveDoor : MonoBehaviour
+{
+    [Header("Door Settings")]
+    public float openAngle = 90f;
+    public float rotationSpeed = 3f;
+
+    private bool isOpen = false;
+    private bool playerNearby = false;
+
+    private Quaternion closedRotation;
+    private Quaternion openRotation;
+
+    void Start()
+    {
+        
+        closedRotation = transform.rotation;
+
+        openRotation = closedRotation * Quaternion.Euler(0, openAngle, 0);
+    }
+
+    void Update()
+    {
+        
+        if (playerNearby && Input.GetKeyDown(KeyCode.E))
+        {
+            isOpen = !isOpen;
+        }
+
+       
+        Quaternion targetRotation = isOpen ? openRotation : closedRotation;
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerNearby = true;
+        }
+    }
+
+   
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerNearby = false;
+        }
+    }
+}
+>>>>>>> Stashed changes:Assets/Scritps/InteractiveDoor.cs
