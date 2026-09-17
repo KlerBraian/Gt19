@@ -725,7 +725,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29ec7622a60d1c84e95ec1b833f15370, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuFinal
-  escenaDeJuego: Juego
+  escenaDeJuego: map experimentar
   escenaMenuPrincipal: Menu
 --- !u!114 &1226737051
 MonoBehaviour:
@@ -967,7 +967,7 @@ RectTransform:
   m_GameObject: {fileID: 1581619918}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.6806, y: 1.6806, z: 1.6806}
+  m_LocalScale: {x: 2.2748604, y: 2.2748604, z: 2.2748604}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1226737054}
