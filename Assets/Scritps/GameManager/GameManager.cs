@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -28,20 +27,29 @@ public class GameManager : MonoBehaviour
     [Header("Fusible / escape")]
     private bool tieneFusible = false;
 
+    [Header("Vidas")]
+    [SerializeField] private int vidasIniciales = 3;
+    private int vidasActuales;
+    [Tooltip("Dónde reaparece el jugador después de perder una vida (no en la última)")]
+    [SerializeField] private Transform puntoReaparicion;
+    private CharacterController controllerJugador;
+
     [Header("Escenas")]
     [Tooltip("Nombre exacto de la escena de Victoria (debe estar en Build Settings)")]
     [SerializeField] private string escenaVictoria = "Victoria";
     [Tooltip("Nombre exacto de la escena de Derrota (debe estar en Build Settings)")]
     [SerializeField] private string escenaDerrota = "Derrota";
 
-    [Header("UI")]
+    [Header("UI (opcional, asigná en el Inspector)")]
     [SerializeField] private TextMeshProUGUI textoTimer;
     [SerializeField] private TextMeshProUGUI textoObjetos;
-    [SerializeField] private TextMeshProUGUI textoAviso; // para mensajes tipo "Te falta el fusible"
+    [SerializeField] private TextMeshProUGUI textoAviso;
+    [SerializeField] private TextMeshProUGUI textoVidas;
 
     [Header("Eventos")]
-    public Action OnPuenteListo;      // se dispara una sola vez al juntar todos los materiales
-    public Action<bool> OnFusibleCambio; // avisa cuando cambia el estado del fusible
+    public Action OnPuenteListo;
+    public Action<bool> OnFusibleCambio; 
+    public Action OnVidaPerdida; 
     public Action OnDerrota;
 
     private void Awake()
@@ -57,8 +65,14 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         tiempoRestante = minutosDuracion * 60f;
+        vidasActuales = vidasIniciales;
         ActualizarUIObjetos();
+        ActualizarUIVidas();
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
+
+        GameObject jugadorObj = GameObject.FindGameObjectWithTag("Player");
+        if (jugadorObj != null)
+            controllerJugador = jugadorObj.GetComponent<CharacterController>();
     }
 
     private void Update()
@@ -66,19 +80,19 @@ public class GameManager : MonoBehaviour
         if (partidaTerminada) return;
 
         tiempoRestante -= Time.deltaTime;
-        ActualizarUITimer();
 
         if (tiempoRestante <= 0f)
         {
             tiempoRestante = 0f;
             ActualizarUITimer();
             Derrota("¡Se acabó el tiempo!");
+            return;
         }
 
         ActualizarUITimer();
     }
 
-    //PUENTE (troncos / cuerdas)
+    // ---------- PUENTE (troncos / cuerdas) ----------
     public void RecolectarMaterialPuente()
     {
         if (partidaTerminada || puenteHabilitado) return;
@@ -102,12 +116,12 @@ public class GameManager : MonoBehaviour
     private void ActualizarUIObjetos()
     {
         if (textoObjetos != null)
-            textoObjetos.text = $"Troncos: {objetosRecolectados}/{totalObjetosNecesarios}";
+            textoObjetos.text = $"Materiales: {objetosRecolectados}/{totalObjetosNecesarios}";
     }
 
     public bool PuenteEstaHabilitado() => puenteHabilitado;
 
-    //FUSIBLE / ESCAPE
+    // ---------- FUSIBLE / ESCAPE ----------
     public void RecolectarFusible()
     {
         if (partidaTerminada) return;
@@ -118,7 +132,6 @@ public class GameManager : MonoBehaviour
     }
 
     public bool TieneFusible() => tieneFusible;
-
     public void IntentarEscapar()
     {
         if (partidaTerminada) return;
@@ -147,13 +160,43 @@ public class GameManager : MonoBehaviour
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
     }
 
-    //MUERTE POR ENEMIGO
+    // ---------- MUERTE POR ENEMIGO ----------
     public void JugadorAtrapado()
     {
-        Derrota("¡El bicho te atrapó!");
+        if (partidaTerminada) return;
+
+        vidasActuales--;
+        ActualizarUIVidas();
+
+        if (vidasActuales <= 0)
+        {
+            Derrota("¡El bicho te atrapó y se acabaron tus vidas!");
+        }
+        else
+        {
+            Debug.Log($"Te atrapó el bicho. Vidas restantes: {vidasActuales}");
+            ReaparecerJugador();
+            OnVidaPerdida?.Invoke();
+        }
     }
 
-    //VICTORIA / DERROTA
+    private void ActualizarUIVidas()
+    {
+        if (textoVidas != null)
+            textoVidas.text = $"Vidas: {vidasActuales}/{vidasIniciales}";
+    }
+
+    private void ReaparecerJugador()
+    {
+        if (controllerJugador == null || puntoReaparicion == null) return;
+        controllerJugador.enabled = false;
+        controllerJugador.transform.position = puntoReaparicion.position;
+        controllerJugador.enabled = true;
+    }
+
+    public int GetVidasActuales() => vidasActuales;
+
+    // ---------- VICTORIA / DERROTA ----------
 
     private void Victoria()
     {
@@ -174,7 +217,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(escenaDerrota);
     }
 
-    //UTILIDAD
+    // ---------- UTILIDAD ----------
 
     public void ReiniciarPartida()
     {
@@ -199,8 +242,7 @@ public class GameManager : MonoBehaviour
         {
             textoTimer.color = colorNormal;
         }
-    
-}
+    }
 
     public float GetTiempoRestante() => tiempoRestante;
     public bool EstaTerminada() => partidaTerminada;
