@@ -5678,22 +5678,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 1072924881722396180, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1072924881722396180, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 4278006837174789902, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4365361720945182530, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: m_Layer
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.89
@@ -5733,14 +5717,6 @@ PrefabInstance:
     - target: {fileID: 5218996143996030731, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5568718010810406649, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: camaraTransform
-      value: 
-      objectReference: {fileID: 969720741}
-    - target: {fileID: 9155100098097628988, guid: 9ba2b879541844e4a8cf1797fbe29920, type: 3}
-      propertyPath: m_Layer
-      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
