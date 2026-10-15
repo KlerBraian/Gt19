@@ -21,6 +21,7 @@ public class PlayerMove : MonoBehaviour
 
 
     [Header("Look")]
+    [SerializeField] private CamaraTerceraPersona terceraPersonaCamera;
     [SerializeField] private Transform cameraPivot;
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float minLookAngle = -80f;
@@ -133,21 +134,13 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleLook()
     {
-        // Horizontal: rotate the player
-        transform.Rotate(
-            Vector3.up,
-            lookInput.x * mouseSensitivity
-        );
+        // Le pasamos el input del mouse/joystick a nuestro script de cámara en tercera persona
+        if (terceraPersonaCamera != null && lookInput != Vector2.zero)
+        {
+            terceraPersonaCamera.ProcesarLook(lookInput);
+        }
 
-        // Vertical: rotate the camera pivot
-        pitch -= lookInput.y * mouseSensitivity;
-        pitch = Mathf.Clamp(pitch, minLookAngle, maxLookAngle);
-
-        cameraPivot.localRotation =
-            Quaternion.Euler(pitch, 0f, 0f);
-
-        // Mouse Delta is a per-frame movement value.
-        // Clear it after applying the rotation.
+        // Limpiamos el input por frame si es necesario
         lookInput = Vector2.zero;
     }
     private void TryInteract()

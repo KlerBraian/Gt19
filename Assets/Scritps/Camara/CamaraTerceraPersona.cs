@@ -1,22 +1,17 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CamaraTerceraPersona : MonoBehaviour
 {
     [Header("Objetivo")]
-    [Tooltip("El jugador, si lo dejas vacio, busca el objeto con el tag 'Player'.")]
     [SerializeField] private Transform objetivo;
-    [Tooltip("Desplazamiento respecto al pivote del jugador (subilo para mirar a la altura de la cabeza).")]
-    [SerializeField] private Vector3 offsetObjetivo = new Vector3 (0f, 1.6f, 0);
+    [SerializeField] private Vector3 offsetObjetivo = new Vector3(0f, 1.6f, 0f);
 
     [Header("Distancia")]
     [SerializeField] private float distancia = 4.5f;
     [SerializeField] private float distanciaMinima = 1f;
 
     [Header("Sensibilidad")]
-    [SerializeField] private float sensibilidadMouse = 3f;
-    [SerializeField] private float sensiblidadJoystick = 150f;
-    [SerializeField] private bool invertirY = false;
+    [SerializeField] private float sensibilidadMouse = 0.1f;
 
     [Header("Limites verticales")]
     [SerializeField] private float anguloMinimoY = -30f;
@@ -25,78 +20,50 @@ public class CamaraTerceraPersona : MonoBehaviour
     [Header("Colision con el entorno")]
     [SerializeField] private bool evitarParedes = true;
     [SerializeField] private LayerMask capaObstaculos = ~0;
-    [Tooltip("Margen para que la camara no quede pegada exactamente a la pared.")]
     [SerializeField] private float margenColision = 0.2f;
-
-    [Header("Ejes de joystick (Input Manager)")]
-    [Tooltip("Nombre del eje horizontal del stick derecho, hay que crearlo en edit > Project Settings > Input Manager.")]
-    [SerializeField] private string nombreEjeXJoystick = "RightStickX";
-    [SerializeField] private string nombreEjeYJoystick = "RightStickY";
-
-    [Header("Mouse")]
-    [SerializeField] private bool bloquearCursor = true;
 
     private float anguloX;
     private float anguloY = 15f;
-    private bool ejesJoystickDisponibles = true;
-    
-    
-    
-    
+
     private void Start()
     {
         if (objetivo == null)
         {
             GameObject jugador = GameObject.FindGameObjectWithTag("Player");
-            if (jugador == null) objetivo = jugador.transform;
-        }
-
-        if (bloquearCursor)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            if (jugador != null) objetivo = jugador.transform;
         }
 
         if (objetivo != null)
+        {
             anguloX = objetivo.eulerAngles.y;
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void LateUpdate()
     {
         if (objetivo == null) return;
 
-        if (GameManager.Instance != null && GameManager.Instance.EstaTerminada())
-        {
-            LiberarCursor();
-            return;
-        }
-
-        LeerInput();
         PosicionarCamara();
-
     }
-    private void LeerInput()
-    {
-        float entradaX = Input.GetAxis("Mouse X") * sensibilidadMouse;
-        float entradaY = Input.GetAxis("Mouse Y") * sensibilidadMouse;
 
-        if (ejesJoystickDisponibles)
-        {
-            try
-            {
-                entradaX += Input.GetAxis(nombreEjeXJoystick) * sensiblidadJoystick * Time.deltaTime;
-                entradaY += Input.GetAxis(nombreEjeYJoystick) * sensiblidadJoystick * Time.deltaTime;
-            }
-            catch (System.ArgumentException)
-            {
-                ejesJoystickDisponibles = false;
-                Debug.LogWarning($"[CamaraTerceraPersona] Los ejes '{nombreEjeXJoystick}' y/o" + $"'{nombreEjeYJoystick}' no estan configurados en el Input Manager.");
-            }
-        }
+    public void ProcesarLook(Vector2 lookInput)
+    {
+        float entradaX = lookInput.x * sensibilidadMouse;
+        float entradaY = lookInput.y * sensibilidadMouse;
+
         anguloX += entradaX;
-        anguloY += invertirY ? entradaY : -entradaY;
+        anguloY -= entradaY;
 
         anguloY = Mathf.Clamp(anguloY, anguloMinimoY, anguloMaximoY);
+
+        // Rotamos al jugador horizontalmente para que siempre apunte hacia donde mira la cámara
+        if (objetivo != null)
+        {
+            objetivo.rotation = Quaternion.Euler(0f, anguloX, 0f);
+        }
     }
 
     private void PosicionarCamara()
@@ -118,11 +85,4 @@ public class CamaraTerceraPersona : MonoBehaviour
         transform.position = puntoFoco + rotacion * Vector3.back * distanciaFinal;
         transform.LookAt(puntoFoco);
     }
-
-    private void LiberarCursor()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-
 }
