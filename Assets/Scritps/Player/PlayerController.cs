@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System;
 using Unity.Mathematics;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -15,17 +16,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float velocidadCorrer = 7f;
     [Tooltip("Que tan rapido rota el personaje hacia la direccion de moviemiento (menor = mas rapido).")]
     [SerializeField] private float suavizadoRotacion = 0.1f;
+    private Vector2 moveInput; //REFERENCIA AL MOVIMIENTO
+    private float currentSpeed; //VELOCIDAD ACTUAL
+    private bool isSprinting; //ESTA CORRIENDO (BOOL)
 
     [Header("Salto y gravedad")]
-    [SerializeField] private bool puedeSaltar = true;
     [SerializeField] private float alturaSalto = 1.5f;
     [SerializeField] private float gravedad = -20f;
+    private float verticalVelocity;
+    [SerializeField] private float fallMultiplier = 1.5f; // Hace que la caída sea más rápida que el salto
 
     [Header("Chequeo de suelo")]
     [Tooltip("Objeto vacio ubicado a los pies del juegador, si lo dejas vacio, usa la base del CharacterController.")]
     [SerializeField] private Transform chequeoSuelo;
     [SerializeField] private float radioChequeoSuelo = 0.25f;
     [SerializeField] private LayerMask capaSuelo = -0;
+
+    [Header("Look")]
+    [SerializeField] private Transform cameraPivot;
+    [SerializeField] private float mouseSensitivity = 0.1f;
+    [SerializeField] private float minLookAngle = -80f;
+    [SerializeField] private float maxLookAngle = 80f;
+    private Vector2 lookInput;
+    private float pitch;
 
     private CharacterController controller;
     private Vector3 velocidadVertical;
@@ -40,14 +53,36 @@ public class PlayerController : MonoBehaviour
             camaraTransform = Camera.main.transform;
     }
 
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        lookInput = context.ReadValue<Vector2>();
+    }
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        isSprinting = context.ReadValueAsButton();
+    }
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            //AplicarGravedadYSalto();
+        }
+    }
+
+
     private void Update()
     {
         if (GameManager.Instance != null && GameManager.Instance.EstaTerminada())
             return;
 
-        ChequearSuelo();
+        //ChequearSuelo();
         Mover();
-        AplicarGravedadYSalto();
+        //AplicarGravedadYSalto();
 
     }
 
@@ -67,48 +102,53 @@ public class PlayerController : MonoBehaviour
     }
       private void Mover()
     {
-        float ejeX = Input.GetAxisRaw("Horizontal");
-        float ejeZ = Input.GetAxisRaw("Vertical");
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
 
-        Vector3 entrada = new Vector3(ejeX, 0f, ejeZ);
+        forward.y = 0f;
+        right.y = 0f;
 
-        float intesidad = Mathf.Clamp01(entrada.magnitude);
-        entrada = entrada.normalized;
+        forward.Normalize();
+        right.Normalize();
 
-        if (intesidad < 0.1f) return;
+        Vector3 horizontalMovement = (forward * moveInput.y + right * moveInput.x);
+        currentSpeed = isSprinting ? velocidadCorrer : velocidadCaminar;
 
-        float anguloObjetivo = Mathf.Atan2(entrada.x, entrada.z) * Mathf.Rad2Deg;
-        if (camaraTransform != null)
-            anguloObjetivo += camaraTransform.eulerAngles.y;
 
-        float anguloSuave = Mathf.SmoothDampAngle(transform.eulerAngles.y, anguloObjetivo, ref velocidadRotacion, suavizadoRotacion);
-        transform.rotation = Quaternion.Euler(0f, anguloSuave, 0f);
+        Vector3 finalMovement = horizontalMovement * currentSpeed;
 
-        Vector3 direccion = Quaternion.Euler(0f, anguloObjetivo, 0f) * Vector3.forward;
+        float intensidad = Mathf.Clamp01(finalMovement.magnitude);
+        finalMovement = finalMovement.normalized;
 
-        bool corriendo = Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire3");
-        float velocidad = corriendo ? velocidadCorrer : velocidadCaminar;
+        if (intensidad < 0.1f) return;
 
-        controller.Move(direccion * velocidad * intesidad * Time.deltaTime);
+        // 2. Aplicar gravedad por separado (sin multiplicarlo por currentSpeed)
+        finalMovement.y = verticalVelocity;
+
+        controller.Move(finalMovement * intensidad * Time.deltaTime);
+
+
+
+
     }
 
-    private void AplicarGravedadYSalto()
-    {
-        if (puedeSaltar && enSuelo && Input.GetButtonDown("Jump"))
-        {
-            velocidadVertical.y = Mathf.Sqrt(alturaSalto * -2f * gravedad);
-        }
+    //private void AplicarGravedadYSalto()
+    //{
+    //    if (puedeSaltar && enSuelo && Input.GetButtonDown("Jump"))
+    //    {
+    //        velocidadVertical.y = Mathf.Sqrt(alturaSalto * -2f * gravedad);
+    //    }
 
-        velocidadVertical.y += gravedad * Time.deltaTime;
-        controller.Move(velocidadVertical * Time.deltaTime);
-    }
+    //    velocidadVertical.y += gravedad * Time.deltaTime;
+    //    controller.Move(velocidadVertical * Time.deltaTime);
+    //}
 
-    private void OnDrawGizmosSelected()
-    {
-        if (chequeoSuelo == null) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(chequeoSuelo.position, radioChequeoSuelo);
-    }
+    //private void OnDrawGizmosSelected()
+    //{
+    //    if (chequeoSuelo == null) return;
+    //    Gizmos.color = Color.green;
+    //    Gizmos.DrawWireSphere(chequeoSuelo.position, radioChequeoSuelo);
+    //}
 
 
 }
