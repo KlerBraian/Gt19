@@ -38,4 +38,5 @@ public class Door : MonoBehaviour, IInteractuable
         if (abrir && efectoParticulas != null)
             Instantiate(efectoParticulas, transform.position, Quaternion.identity);
     }
+
 }
