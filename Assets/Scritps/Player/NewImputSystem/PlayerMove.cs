@@ -32,11 +32,8 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float maxLookAngle = 80f;
     private Vector2 lookInput;
     private float pitch;
-
-    [Header("Interaccion")]
     [SerializeField] private Transform ojosTransform;
-    [SerializeField] private float interactRange = 3f; // Distancia máxima para agarrar objetos
-    [SerializeField] private LayerMask interactableLayer; // Capa para filtrar objetos interactuables
+
 
 
     private void Awake()
@@ -76,13 +73,7 @@ public class PlayerMove : MonoBehaviour
             HandleJump();
         }
     }
-    public void OnInteract(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            TryInteract();
-        }
-    }
+ 
 
 
     ////////////////////////// UPDATE//////////////////////////////////////
@@ -159,54 +150,23 @@ public class PlayerMove : MonoBehaviour
     //}
     private void HandleLook()   // VISTA CAMARA
     {
-        // 1. Rota el cuerpo del jugador horizontalmente (eje Y)
+ 
         transform.Rotate(
             Vector3.up,
             lookInput.x * mouseSensitivity
         );
 
-        // 2. Calcula la inclinación vertical (pitch)
         pitch -= lookInput.y * mouseSensitivity;
         pitch = Mathf.Clamp(pitch, minLookAngle, maxLookAngle);
 
-        // 3. Aplica la rotación al pivote de la cámara
         cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
 
-        // 4. NUEVO: Sincroniza los ojos con la misma rotación vertical (o copia la rotación exacta del pivot)
         if (ojosTransform != null)
         {
-            // Opción A: Mantener la rotación horizontal del cuerpo pero aplicar el pitch vertical
             ojosTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
 
-            // (O puedes usar eyesTransform.rotation = cameraPivot.rotation si quieres que copien absolutamente todo)
         }
 
         lookInput = Vector2.zero;
-    }
-    private void TryInteract()
-    {
-        Ray ray = new Ray(ojosTransform.position, ojosTransform.forward);
-
-        // El LayerMask filtra rápidamente cualquier objeto que no sea interactuable
-        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, interactableLayer))
-        {
-            // Buscamos si el objeto tocado tiene la interfaz de interacción
-            if (hit.collider.TryGetComponent<IInteractuable>(out IInteractuable interactable))
-            {
-                interactable.Interactuar(); // Ejecuta la lógica específica de ese objeto (puerta, fusible, etc.)
-            }
-        }
-    }
-    private void OnDrawGizmos()
-    {
-        // Asegúrate de que cameraPivot esté asignado para evitar errores si aún no cargó
-        if (ojosTransform != null)
-        {
-            // Cambia el color del gizmo (por ejemplo, rojo para que se note bien)
-            Gizmos.color = Color.red;
-
-            // Dibuja una línea desde la posición del pivote de la cámara en la dirección que apunta
-            Gizmos.DrawRay(ojosTransform.position, ojosTransform.forward * interactRange);
-        }
     }
 }

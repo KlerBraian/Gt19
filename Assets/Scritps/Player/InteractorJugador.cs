@@ -1,21 +1,21 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class InteractorJugador : MonoBehaviour
 {
     [Header("Referencias")]
-    [Tooltip("Desde dónde sale el rayo. Si lo dejás vacío, usa este mismo transform.")]
-    [SerializeField] private Transform origenRaycast;
+    [Tooltip("La cámara principal del juego (para el centro de la pantalla).")]
+    [SerializeField] private Camera camaraPrincipal;
+    [Tooltip("Objeto que representa los ojos del jugador (donde nace el rayo).")]
+    [SerializeField] private Transform ojosTransform;
 
     [Header("Configuración")]
     [SerializeField] private float distanciaInteraccion = 3f;
-    [SerializeField] private LayerMask capaInteractuable = ~0;
-    [SerializeField] private KeyCode teclaInteraccion = KeyCode.E;
+    [SerializeField] private LayerMask capaInteractuable;
 
     [Header("UI")]
-    [Tooltip("Texto que muestra el nombre de la acción, ej: 'Presioná E para...'")]
     [SerializeField] private TextMeshProUGUI textoPrompt;
-    [Tooltip("Opcional: el punto de mira (crosshair). Se agranda o cambia de color al detectar algo interactuable.")]
     [SerializeField] private UnityEngine.UI.Image crosshair;
     [SerializeField] private Color colorCrosshairNormal = Color.white;
     [SerializeField] private Color colorCrosshairActivo = Color.yellow;
@@ -24,7 +24,11 @@ public class InteractorJugador : MonoBehaviour
 
     private void Awake()
     {
-        if (origenRaycast == null) origenRaycast = transform;
+        if (ojosTransform == null) ojosTransform = transform;
+
+        // Si no asignaste la cámara en el Inspector, la busca automáticamente
+        if (camaraPrincipal == null) camaraPrincipal = Camera.main;
+
         if (textoPrompt != null) textoPrompt.gameObject.SetActive(false);
     }
 
@@ -37,8 +41,11 @@ public class InteractorJugador : MonoBehaviour
         }
 
         DetectarInteractuable();
+    }
 
-        if (objetivoActual != null && Input.GetKeyDown(teclaInteraccion))
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed && objetivoActual != null)
         {
             objetivoActual.Interactuar();
         }
@@ -46,19 +53,63 @@ public class InteractorJugador : MonoBehaviour
 
     private void DetectarInteractuable()
     {
-        Ray rayo = new Ray(origenRaycast.position, origenRaycast.forward);
+        if (camaraPrincipal == null || ojosTransform == null) return;
 
-        if (Physics.Raycast(rayo, out RaycastHit hit, distanciaInteraccion, capaInteractuable,
-                            QueryTriggerInteraction.Collide))
+        // 1. Lanzamos un rayo desde el centro de la pantalla de la cámara
+        Ray screenRay = camaraPrincipal.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+
+        Vector3 puntoDestino;
+        if (Physics.Raycast(screenRay, out RaycastHit screenHit, distanciaInteraccion + 2f))
         {
-            if (hit.collider.TryGetComponent<IInteractuable>(out IInteractuable interactuable))
+            puntoDestino = screenHit.point;
+        }
+        else
+        {
+            puntoDestino = screenRay.GetPoint(distanciaInteraccion);
+        }
+
+        // 2. Dirección desde los ojos hacia el punto de la cámara
+        Vector3 direccionReal = (puntoDestino - ojosTransform.position).normalized;
+        Ray rayoReal = new Ray(ojosTransform.position, direccionReal);
+
+        // 3. Usamos RaycastAll para asegurarnos de ignorar al propio jugador si llegara a cruzarse
+        RaycastHit[] hits = Physics.RaycastAll(rayoReal, distanciaInteraccion, capaInteractuable, QueryTriggerInteraction.Collide);
+
+        // Ordenamos los impactos por distancia para tomar el primero que encuentre
+        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
+
+        foreach (var hit in hits)
+        {
+            // Nos aseguramos de que no nos detecte a nosotros mismos (si el jugador tuviera la capa interactuable por error)
+            if (hit.transform.root == transform.root) continue;
+
+            if (hit.collider.TryGetComponent<IInteractuable>(out IInteractuable interactable))
             {
-                MostrarObjetivo(interactuable);
+                MostrarObjetivo(interactable);
                 return;
             }
         }
 
         LimpiarObjetivo();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (ojosTransform == null) return;
+
+        Camera cam = camaraPrincipal != null ? camaraPrincipal : Camera.main;
+        if (cam != null)
+        {
+            Ray screenRay = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
+            Vector3 puntoDestino = Physics.Raycast(screenRay, out RaycastHit screenHit, distanciaInteraccion + 2f)
+                ? screenHit.point
+                : screenRay.GetPoint(distanciaInteraccion);
+
+            Vector3 direccionReal = (puntoDestino - ojosTransform.position).normalized;
+
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawRay(ojosTransform.position, direccionReal * distanciaInteraccion);
+        }
     }
 
     private void MostrarObjetivo(IInteractuable nuevo)
@@ -81,12 +132,5 @@ public class InteractorJugador : MonoBehaviour
         objetivoActual = null;
         if (textoPrompt != null) textoPrompt.gameObject.SetActive(false);
         if (crosshair != null) crosshair.color = colorCrosshairNormal;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Transform origen = origenRaycast != null ? origenRaycast : transform;
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(origen.position, origen.position + origen.forward * distanciaInteraccion);
     }
 }
