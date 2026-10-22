@@ -34,6 +34,7 @@ public class PlayerMove : MonoBehaviour
     private float pitch;
     [SerializeField] private Transform ojosTransform;
 
+    private Animator animator;
 
 
     private void Awake()
@@ -45,6 +46,7 @@ public class PlayerMove : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        animator=GetComponentInChildren<Animator>();
     }
 
 
@@ -71,6 +73,7 @@ public class PlayerMove : MonoBehaviour
         if (context.performed)
         {
             HandleJump();
+            animator.SetTrigger("Jump");
         }
     }
  
@@ -82,6 +85,7 @@ public class PlayerMove : MonoBehaviour
         HandleLook(); 
         HandleMove();
         HandleGravity();
+        animator.SetBool("IsGrounded", controller.isGrounded);
     }
 
 
@@ -125,12 +129,31 @@ public class PlayerMove : MonoBehaviour
 
         Vector3 horizontalMovement = (forward * moveInput.y + right * moveInput.x);
         currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+        if (moveInput.magnitude > 0f)
+        {
+            // Si se mueve, decide si corre o camina
+            currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+        }
+        else
+        {
+            // Si NO se mueve, la velocidad es 0
+            currentSpeed = 0f;
+        }
 
         Vector3 finalMovement = horizontalMovement * currentSpeed;
 
         finalMovement.y = verticalVelocity;
 
         controller.Move(finalMovement * Time.deltaTime);
+        if (animator != null)
+        {
+                animator.SetFloat("Walk", currentSpeed);
+        }
+        if (currentSpeed == sprintSpeed)
+        {
+            animator.SetBool("isRun", true);
+        }
+        else animator.SetBool("isRun", false);
     }
 
     //private void HandleLook()   // VISTA CAMARA
