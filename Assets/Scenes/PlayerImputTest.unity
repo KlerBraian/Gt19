@@ -4081,6 +4081,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3666407204283366290, guid: c0ed15dc26bc6f842a59def3175af814, type: 3}
+      propertyPath: sonidoAlRecoger
+      value: 
+      objectReference: {fileID: 8300000, guid: b7e2fb4fb3a8cee44b154c90c5b0bf80, type: 3}
     - target: {fileID: 5872140895770784010, guid: c0ed15dc26bc6f842a59def3175af814, type: 3}
       propertyPath: m_LocalPosition.x
       value: -27.587687
@@ -16498,15 +16502,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3944761881505831785, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20.64
+      value: 11.38
       objectReference: {fileID: 0}
     - target: {fileID: 3944761881505831785, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.13
+      value: 12.95
       objectReference: {fileID: 0}
     - target: {fileID: 3944761881505831785, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 46.35
+      value: 28.18
       objectReference: {fileID: 0}
     - target: {fileID: 3944761881505831785, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_LocalRotation.w
@@ -21612,6 +21616,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 780630815}
     m_Modifications:
+    - target: {fileID: 1860455717307596920, guid: 27dad59b4e65fab408476d14d7de2a80, type: 3}
+      propertyPath: sonidoAlRecoger
+      value: 
+      objectReference: {fileID: 8300000, guid: b7e2fb4fb3a8cee44b154c90c5b0bf80, type: 3}
     - target: {fileID: 3584612170076974992, guid: 27dad59b4e65fab408476d14d7de2a80, type: 3}
       propertyPath: m_Name
       value: palos
@@ -27220,7 +27228,7 @@ PrefabInstance:
       objectReference: {fileID: 1868640700}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: minutosDuracion
-      value: 2
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: puntoReaparicion
@@ -46064,6 +46072,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 987578503}
     m_Modifications:
+    - target: {fileID: 230461258187124827, guid: 2e1c80361c3a23d4b8c7edc15e837913, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.007
+      objectReference: {fileID: 0}
     - target: {fileID: 687049833756617465, guid: 2e1c80361c3a23d4b8c7edc15e837913, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -54652,6 +54664,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2798728546773839984, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
+      propertyPath: sonidoAlAbrir
+      value: 
+      objectReference: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
+    - target: {fileID: 2798728546773839984, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
+      propertyPath: sonidoAlCerrar
+      value: 
+      objectReference: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
     - target: {fileID: 6738534996572155567, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -75773,6 +75793,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 780630815}
     m_Modifications:
+    - target: {fileID: 1860455717307596920, guid: 27dad59b4e65fab408476d14d7de2a80, type: 3}
+      propertyPath: sonidoAlRecoger
+      value: 
+      objectReference: {fileID: 8300000, guid: b7e2fb4fb3a8cee44b154c90c5b0bf80, type: 3}
     - target: {fileID: 3584612170076974992, guid: 27dad59b4e65fab408476d14d7de2a80, type: 3}
       propertyPath: m_Name
       value: palos (2)
@@ -80051,6 +80075,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2798728546773839984, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
+      propertyPath: sonidoAlAbrir
+      value: 
+      objectReference: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
+    - target: {fileID: 2798728546773839984, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
+      propertyPath: sonidoAlCerrar
+      value: 
+      objectReference: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
     - target: {fileID: 6738534996572155567, guid: 17e95fc71a14c09409ec7d9bfc1c4d3f, type: 3}
       propertyPath: m_Layer
       value: 10

@@ -16,7 +16,8 @@ public class Coleccionable : MonoBehaviour, IInteractuable
     public void Interactuar()
     {
         if (sonidoAlRecoger != null)
-            AudioSource.PlayClipAtPoint(sonidoAlRecoger, transform.position);
+           
+            AudioSource.PlayClipAtPoint(sonidoAlRecoger, transform.position, 0.3f);
 
         if (efectoParticulas != null)
             Instantiate(efectoParticulas, transform.position, Quaternion.identity);
