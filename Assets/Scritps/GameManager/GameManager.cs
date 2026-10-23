@@ -198,7 +198,7 @@ public class GameManager : MonoBehaviour
 
     // ---------- VICTORIA / DERROTA ----------
 
-    private void Victoria()
+    public void Victoria()
     {
         if (partidaTerminada) return;
         partidaTerminada = true;
