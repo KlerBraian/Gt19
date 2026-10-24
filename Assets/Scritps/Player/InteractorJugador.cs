@@ -1,136 +1,95 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// Va en la Main Camera. Tira un rayo desde el centro de la pantalla, detecta
+/// objetos con Interactuable, muestra el prompt y ejecuta la acción al apretar E.
+/// </summary>
 public class InteractorJugador : MonoBehaviour
 {
     [Header("Referencias")]
-    [Tooltip("La cámara principal del juego (para el centro de la pantalla).")]
-    [SerializeField] private Camera camaraPrincipal;
-    [Tooltip("Objeto que representa los ojos del jugador (donde nace el rayo).")]
-    [SerializeField] private Transform ojosTransform;
+    [Tooltip("Desde dónde sale el rayo. Vacío = la Main Camera.")]
+    [SerializeField] private Transform origenRaycast;
 
     [Header("Configuración")]
-    [SerializeField] private float distanciaInteraccion = 3f;
-    [SerializeField] private LayerMask capaInteractuable;
+    [SerializeField] private float distanciaInteraccion = 8f;
+    [SerializeField] private LayerMask capaInteractuable = ~0;
+    [SerializeField] private KeyCode teclaInteraccion = KeyCode.E;
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI textoPrompt;
-    [SerializeField] private UnityEngine.UI.Image crosshair;
+    [SerializeField] private Image crosshair;
     [SerializeField] private Color colorCrosshairNormal = Color.white;
     [SerializeField] private Color colorCrosshairActivo = Color.yellow;
 
-    private IInteractuable objetivoActual;
+    private Interactuable objetivo;
+    private bool promptVisible;
 
     private void Awake()
     {
-        if (ojosTransform == null) ojosTransform = transform;
-
-        // Si no asignaste la cámara en el Inspector, la busca automáticamente
-        if (camaraPrincipal == null) camaraPrincipal = Camera.main;
+        if (origenRaycast == null)
+            origenRaycast = Camera.main != null ? Camera.main.transform : transform;
 
         if (textoPrompt != null) textoPrompt.gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.EstaTerminada())
+        GameManager gm = GameManager.Instance;
+        if (gm != null && gm.EstaTerminada())
         {
-            LimpiarObjetivo();
+            objetivo = null;
+            OcultarPrompt();
             return;
         }
 
-        DetectarInteractuable();
+        Detectar();
+
+        if (objetivo != null && Input.GetKeyDown(teclaInteraccion))
+            objetivo.Interactuar();
     }
 
-    public void OnInteract(InputAction.CallbackContext context)
+    private void Detectar()
     {
-        if (context.performed && objetivoActual != null)
+        objetivo = null;
+
+        if (Physics.Raycast(origenRaycast.position, origenRaycast.forward, out RaycastHit hit,
+                            distanciaInteraccion, capaInteractuable, QueryTriggerInteraction.Collide))
         {
-            objetivoActual.Interactuar();
+            // InParent: el collider puede estar en un hijo (ej. el mesh de la puerta).
+            objetivo = hit.collider.GetComponentInParent<Interactuable>();
         }
+
+        if (objetivo != null) MostrarPrompt(objetivo.ObtenerPrompt());
+        else OcultarPrompt();
     }
 
-    private void DetectarInteractuable()
+    private void MostrarPrompt(string mensaje)
     {
-        if (camaraPrincipal == null || ojosTransform == null) return;
-
-        // 1. Lanzamos un rayo desde el centro de la pantalla de la cámara
-        Ray screenRay = camaraPrincipal.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
-
-        Vector3 puntoDestino;
-        if (Physics.Raycast(screenRay, out RaycastHit screenHit, distanciaInteraccion + 2f))
+        if (textoPrompt != null)
         {
-            puntoDestino = screenHit.point;
-        }
-        else
-        {
-            puntoDestino = screenRay.GetPoint(distanciaInteraccion);
+            if (!promptVisible) textoPrompt.gameObject.SetActive(true);
+            if (textoPrompt.text != mensaje) textoPrompt.text = mensaje;
         }
 
-        // 2. Dirección desde los ojos hacia el punto de la cámara
-        Vector3 direccionReal = (puntoDestino - ojosTransform.position).normalized;
-        Ray rayoReal = new Ray(ojosTransform.position, direccionReal);
+        if (!promptVisible && crosshair != null) crosshair.color = colorCrosshairActivo;
+        promptVisible = true;
+    }
 
-        // 3. Usamos RaycastAll para asegurarnos de ignorar al propio jugador si llegara a cruzarse
-        RaycastHit[] hits = Physics.RaycastAll(rayoReal, distanciaInteraccion, capaInteractuable, QueryTriggerInteraction.Collide);
+    private void OcultarPrompt()
+    {
+        if (!promptVisible) return;
+        promptVisible = false;
 
-        // Ordenamos los impactos por distancia para tomar el primero que encuentre
-        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
-
-        foreach (var hit in hits)
-        {
-            // Nos aseguramos de que no nos detecte a nosotros mismos (si el jugador tuviera la capa interactuable por error)
-            if (hit.transform.root == transform.root) continue;
-
-            if (hit.collider.TryGetComponent<IInteractuable>(out IInteractuable interactable))
-            {
-                MostrarObjetivo(interactable);
-                return;
-            }
-        }
-
-        LimpiarObjetivo();
+        if (textoPrompt != null) textoPrompt.gameObject.SetActive(false);
+        if (crosshair != null) crosshair.color = colorCrosshairNormal;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (ojosTransform == null) return;
-
-        Camera cam = camaraPrincipal != null ? camaraPrincipal : Camera.main;
-        if (cam != null)
-        {
-            Ray screenRay = cam.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
-            Vector3 puntoDestino = Physics.Raycast(screenRay, out RaycastHit screenHit, distanciaInteraccion + 2f)
-                ? screenHit.point
-                : screenRay.GetPoint(distanciaInteraccion);
-
-            Vector3 direccionReal = (puntoDestino - ojosTransform.position).normalized;
-
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawRay(ojosTransform.position, direccionReal * distanciaInteraccion);
-        }
-    }
-
-    private void MostrarObjetivo(IInteractuable nuevo)
-    {
-        objetivoActual = nuevo;
-
-        if (textoPrompt != null)
-        {
-            textoPrompt.text = nuevo.TextoPrompt();
-            textoPrompt.gameObject.SetActive(true);
-        }
-
-        if (crosshair != null) crosshair.color = colorCrosshairActivo;
-    }
-
-    private void LimpiarObjetivo()
-    {
-        if (objetivoActual == null) return;
-
-        objetivoActual = null;
-        if (textoPrompt != null) textoPrompt.gameObject.SetActive(false);
-        if (crosshair != null) crosshair.color = colorCrosshairNormal;
+        Transform origen = origenRaycast != null ? origenRaycast : transform;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(origen.position, origen.position + origen.forward * distanciaInteraccion);
     }
 }

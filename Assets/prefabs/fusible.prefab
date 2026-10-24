@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3084514445478697261}
   - component: {fileID: 1353032649868471605}
   - component: {fileID: 222156807844725986}
-  - component: {fileID: 3666407204283366290}
+  - component: {fileID: 4175516095001217460}
   m_Layer: 10
   m_Name: fusible
   m_TagString: Untagged
@@ -114,7 +114,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &3666407204283366290
+--- !u!114 &4175516095001217460
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -123,9 +123,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3584612170076974992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc2e4a3c3ead01e42b18667d19b2e31f, type: 3}
+  m_Script: {fileID: 11500000, guid: 34d9d9febfd8c9d4b97aac092f79b113, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Fusible
-  textoPrompt: "Presion\xE1 E para recoger el fusible"
-  sonidoAlRecoger: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Interactuable
+  tipo: 1
+  textoPrompt: "Presion\xE1 E para interactuar"
+  textoPromptCerrar: "Presion\xE1 E para cerrar la puerta"
+  sonido: {fileID: 0}
+  sonidoAlCerrar: {fileID: 0}
   efectoParticulas: {fileID: 0}
+  velocidad: 100
+  anguloApertura: 90

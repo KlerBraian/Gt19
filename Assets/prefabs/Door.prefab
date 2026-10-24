@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1621705803684163557}
   - component: {fileID: 8159172952578715831}
-  - component: {fileID: 2798728546773839984}
+  - component: {fileID: 5884386256398659603}
   m_Layer: 9
   m_Name: Door
   m_TagString: Untagged
@@ -55,7 +55,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 8.871168, y: 13.071587, z: 1.393371}
   m_Center: {x: 3.935582, y: -0.28688365, z: 0.19668514}
---- !u!114 &2798728546773839984
+--- !u!114 &5884386256398659603
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,12 +64,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 845996285687129668}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f05c78e08bf8109448c2dcbd088c77a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 34d9d9febfd8c9d4b97aac092f79b113, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Door
-  textoPrompt: "Presion\xE1 E para abrir la puerta"
-  sonidoAlAbrir: {fileID: 0}
-  sonidoAlCerrar: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Interactuable
+  tipo: 3
+  textoPrompt: "Presion\xE1 E para interactuar"
+  textoPromptCerrar: "Presion\xE1 E para cerrar la puerta"
+  sonido: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
+  sonidoAlCerrar: {fileID: 8300000, guid: 5c37b7ba977711344b865ac967fb1074, type: 3}
   efectoParticulas: {fileID: 0}
   velocidad: 100
   anguloApertura: 90

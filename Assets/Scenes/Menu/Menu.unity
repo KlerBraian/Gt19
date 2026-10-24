@@ -294,7 +294,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1378216099}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MenuPrincipal, Assembly-CSharp
         m_MethodName: Salir
         m_Mode: 1
@@ -671,10 +671,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1378216095}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de9746be285d9a54690be46dc29eb7fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 7849d20519d7d9e4b9930bbc03db72ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MenuPrincipal
-  escenaDeJuego: Game
+  m_EditorClassIdentifier: Assembly-CSharp::MenuEscenas
+  escenaDeJuego: PlayerImputTest
+  escenaMenuPrincipal: MenuPrincipal
 --- !u!1 &1416705420
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,7 +1239,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1378216099}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MenuPrincipal, Assembly-CSharp
         m_MethodName: Jugar
         m_Mode: 1
