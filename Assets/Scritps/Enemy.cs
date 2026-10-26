@@ -48,7 +48,7 @@ public class EnemigoPersigue : MonoBehaviour
     [Tooltip("Qué tan cerca tiene que estar para golpearte (subilo si el modelo es grande)")]
     [SerializeField] private float distanciaParaMatar = 1.5f;
     [Tooltip("Segundos desde que arranca la animación hasta que el golpe impacta. Ajustalo al momento en que el brazo pega.")]
-    [SerializeField] private float retrasoDano = 0.5f;
+    [SerializeField] private float retrasoDaño = 0.5f;
     [Tooltip("Duración total de la animación de golpe")]
     [SerializeField] private float duracionGolpe = 1.2f;
     [Tooltip("Segundos entre un golpe y el siguiente (tiene que ser >= la duración del golpe)")]
@@ -228,7 +228,6 @@ public class EnemigoPersigue : MonoBehaviour
 
     private void IniciarPersecucion()
     {
-        // Ruge la primera vez que te ve; después, solo si pasó el cooldown.
         CambiarEstado(Time.time >= proximoRugido ? Estado.Rugiendo : Estado.Persiguiendo);
     }
 
@@ -250,7 +249,6 @@ public class EnemigoPersigue : MonoBehaviour
 
             case Estado.Persiguiendo:
                 agente.speed = velocidadPersecucion;
-                // Se frena un poco antes de llegar para no empujarte.
                 agente.stoppingDistance = Mathf.Max(DistanciaLlegada, distanciaParaMatar * 0.8f);
                 proximaActualizacionRuta = 0f;
                 break;
@@ -272,7 +270,7 @@ public class EnemigoPersigue : MonoBehaviour
             case Estado.Golpeando:
                 Detener();
                 ReproducirAnimacion(hashGolpe, true);
-                momentoDano = Time.time + retrasoDano;
+                momentoDano = Time.time + retrasoDaño;
                 finAccion = Time.time + duracionGolpe;
                 proximoAtaque = Time.time + cooldownDespuesDeAtrapar;
                 danoAplicado = false;
@@ -308,7 +306,6 @@ public class EnemigoPersigue : MonoBehaviour
             proximaActualizacionRuta = Time.time + intervaloActualizacionRuta;
         }
 
-        // Solo golpea si te ve (no a través de una pared) y estás a tiro.
         if (veJugador && Time.time >= proximoAtaque && EnRango(distanciaParaMatar))
             CambiarEstado(Estado.Golpeando);
     }
@@ -340,9 +337,6 @@ public class EnemigoPersigue : MonoBehaviour
     private void Golpear(GameManager gm)
     {
         MirarHacia(jugador.position);
-
-        // El daño cae en el momento del impacto, no al empezar la animación.
-        // Si en ese instante ya te alejaste, el golpe falla.
         if (!danoAplicado && Time.time >= momentoDano)
         {
             danoAplicado = true;
@@ -362,7 +356,6 @@ public class EnemigoPersigue : MonoBehaviour
 
     private void ActualizarAnimacionYPasos()
     {
-        // Rugido y golpe ya arrancaron su animación al entrar al estado.
         if (estado == Estado.Rugiendo || estado == Estado.Golpeando) return;
 
         bool seMueve = agente.velocity.sqrMagnitude > 0.04f;
@@ -377,11 +370,6 @@ public class EnemigoPersigue : MonoBehaviour
             Sonar(sonidosPasos[Random.Range(0, sonidosPasos.Length)], agachado ? volumenPasosPatrulla : 1f);
         }
     }
-
-    /// <summary>
-    /// Si el estado no existe en el Animator, Unity avisa una vez en la Console
-    /// ("State could not be found"): revisá que el nombre coincida letra por letra.
-    /// </summary>
     private void ReproducirAnimacion(int hash, bool reiniciar)
     {
         if (animator == null) return;
