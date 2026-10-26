@@ -365,17 +365,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1585240839342318238, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1585240839342318238, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2047235619606261691, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2135946689241043323, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2295434060213110529, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
@@ -495,11 +499,19 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4086609345439639188, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4358547701349203738, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4493937001637923090, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4539870615132371142, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
@@ -959,6 +971,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
+--- !u!1 &1038035498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1038035500}
+  - component: {fileID: 1038035499}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1038035499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1038035498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ca4373fa4638247b7f351d23a6fcc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  minutosDuracion: 15
+  segundosParaAlarma: 60
+  velocidadParpadeo: 4
+  colorNormal: {r: 1, g: 1, b: 1, a: 1}
+  colorAlarma: {r: 1, g: 0, b: 0, a: 1}
+  totalObjetosNecesarios: 5
+  puenteConstruido: {fileID: 0}
+  bloqueoDePaso: {fileID: 0}
+  sonidoConstruccion: {fileID: 0}
+  vidasIniciales: 3
+  puntoReaparicion: {fileID: 2008318985}
+  reaparecerAlPerderVida: 1
+  escenaVictoria: Victoria
+  escenaDerrota: Derrota
+  textoTimer: {fileID: 0}
+  textoObjetos: {fileID: 0}
+  textoAviso: {fileID: 0}
+  textoVidas: {fileID: 0}
+--- !u!4 &1038035500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1038035498}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.95548, y: 0.09, z: -19.34887}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1205391781
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,6 +1175,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3420307487568883757, guid: 377bd81922920fd4aadb07b5f6d40bb6, type: 3}
   m_PrefabInstance: {fileID: 8786836011680755533}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2008318984
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2008318985}
+  m_Layer: 0
+  m_Name: PuntoDeAparicion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2008318985
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2008318984}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 27.8, y: 0.09, z: -38.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8786836011680755533
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1168,3 +1273,5 @@ SceneRoots:
   - {fileID: 304797731}
   - {fileID: 344755469}
   - {fileID: 8786836011680755533}
+  - {fileID: 1038035500}
+  - {fileID: 2008318985}

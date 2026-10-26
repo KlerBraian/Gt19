@@ -46,15 +46,15 @@ public class PlayerMove : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        animator=GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
 
 
 
     ///////////////////// UNITY EVENTS ////////////////////////
-    
-  
+
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
@@ -73,19 +73,23 @@ public class PlayerMove : MonoBehaviour
         if (context.performed)
         {
             HandleJump();
-            animator.SetTrigger("Jump");
+            if (animator != null) animator.SetTrigger("Jump");
         }
     }
- 
+
 
 
     ////////////////////////// UPDATE//////////////////////////////////////
     private void Update()
     {
-        HandleLook(); 
+        // Partida terminada (victoria o derrota): el jugador ya no se mueve ni mira.
+        GameManager gm = GameManager.Instance;
+        if (gm != null && gm.EstaTerminada()) return;
+
+        HandleLook();
         HandleMove();
         HandleGravity();
-        animator.SetBool("IsGrounded", controller.isGrounded);
+        if (animator != null) animator.SetBool("IsGrounded", controller.isGrounded);
     }
 
 
@@ -115,7 +119,7 @@ public class PlayerMove : MonoBehaviour
 
         verticalVelocity += currentGravity * Time.deltaTime;
     }
-    
+
     private void HandleMove() //MOVIMIENTO
     {
         Vector3 forward = transform.forward;
@@ -147,33 +151,14 @@ public class PlayerMove : MonoBehaviour
         controller.Move(finalMovement * Time.deltaTime);
         if (animator != null)
         {
-                animator.SetFloat("Walk", currentSpeed);
+            animator.SetFloat("Walk", currentSpeed);
         }
-        if (currentSpeed == sprintSpeed)
-        {
-            animator.SetBool("isRun", true);
-        }
-        else animator.SetBool("isRun", false);
+        if (animator != null)
+            animator.SetBool("isRun", currentSpeed == sprintSpeed);
     }
-
-    //private void HandleLook()   // VISTA CAMARA
-    //{
-    //    transform.Rotate(
-    //        Vector3.up,
-    //        lookInput.x * mouseSensitivity
-    //    );
-
-    //    pitch -= lookInput.y * mouseSensitivity;
-    //    pitch = Mathf.Clamp(pitch, minLookAngle, maxLookAngle);
-
-    //    cameraPivot.localRotation =
-    //        Quaternion.Euler(pitch, 0f, 0f);
-
-    //    lookInput = Vector2.zero;
-    //}
     private void HandleLook()   // VISTA CAMARA
     {
- 
+
         transform.Rotate(
             Vector3.up,
             lookInput.x * mouseSensitivity

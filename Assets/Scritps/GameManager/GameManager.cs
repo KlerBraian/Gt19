@@ -92,8 +92,6 @@ public class GameManager : MonoBehaviour
     }
 
     // ---------- PUENTE ----------
-
-    /// <summary>Lo llama Interactuable (tipo MaterialPuente).</summary>
     public void RecolectarMaterialPuente()
     {
         if (partidaTerminada || puenteHabilitado) return;
@@ -137,15 +135,11 @@ public class GameManager : MonoBehaviour
     }
 
     // ---------- FUSIBLE / ESCAPE ----------
-
-    /// <summary>Lo llama Interactuable (tipo Fusible).</summary>
     public void RecolectarFusible()
     {
         if (partidaTerminada) return;
         tieneFusible = true;
     }
-
-    /// <summary>Lo llama Interactuable (tipo Escape), el botón de la torre.</summary>
     public void IntentarEscapar()
     {
         if (partidaTerminada) return;
@@ -170,8 +164,6 @@ public class GameManager : MonoBehaviour
     }
 
     // ---------- VIDAS ----------
-
-    /// <summary>Lo llama EnemigoPersigue. Resta una vida; con 0 es derrota.</summary>
     public void JugadorAtrapado()
     {
         if (partidaTerminada) return;
@@ -194,8 +186,6 @@ public class GameManager : MonoBehaviour
     private void ReaparecerJugador()
     {
         if (controllerJugador == null || puntoReaparicion == null) return;
-
-        // Con el CharacterController activo, Unity ignora el cambio de posición.
         controllerJugador.enabled = false;
         controllerJugador.transform.position = puntoReaparicion.position;
         controllerJugador.enabled = true;
@@ -207,6 +197,7 @@ public class GameManager : MonoBehaviour
     {
         if (partidaTerminada) return;
         partidaTerminada = true;
+        LiberarCursor();
         SceneManager.LoadScene(escenaVictoria);
     }
 
@@ -216,7 +207,14 @@ public class GameManager : MonoBehaviour
         partidaTerminada = true;
 
         Debug.Log("DERROTA: " + motivo);
+        LiberarCursor();
         SceneManager.LoadScene(escenaDerrota);
+    }
+
+    private static void LiberarCursor()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     // ---------- TIMER UI ----------
@@ -224,9 +222,6 @@ public class GameManager : MonoBehaviour
     private void ActualizarUITimer()
     {
         if (textoTimer == null) return;
-
-        // El texto solo se reescribe cuando cambia el segundo que se muestra
-        // (antes se armaba un string nuevo en cada frame).
         int segundos = Mathf.FloorToInt(tiempoRestante);
         if (segundos != segundoMostrado)
         {
@@ -246,7 +241,5 @@ public class GameManager : MonoBehaviour
     }
 
     public bool EstaTerminada() => partidaTerminada;
-
-    /// <summary>true cuando ya juntaste todos los materiales del puente (el enemigo pasa a modo caza).</summary>
     public bool PuenteHabilitado => puenteHabilitado;
 }
