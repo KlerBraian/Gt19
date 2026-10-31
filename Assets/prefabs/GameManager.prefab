@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 7638337122546477272}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.05719, y: 13, z: 3.48179}
+  m_LocalPosition: {x: -3.95548, y: 0.09, z: -19.34887}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -43,15 +43,21 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c3ca4373fa4638247b7f351d23a6fcc5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManeger
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
   minutosDuracion: 15
   segundosParaAlarma: 60
   velocidadParpadeo: 4
   colorNormal: {r: 1, g: 1, b: 1, a: 1}
   colorAlarma: {r: 1, g: 0, b: 0, a: 1}
-  totalObjetosNecesarios: 1
+  totalObjetosNecesarios: 5
+  puenteConstruido: {fileID: 0}
+  bloqueoDePaso: {fileID: 0}
+  sonidoConstruccion: {fileID: 0}
+  puntoReaparicion: {fileID: 0}
+  reaparecerAlPerderVida: 0
   escenaVictoria: Victoria
   escenaDerrota: Derrota
   textoTimer: {fileID: 0}
   textoObjetos: {fileID: 0}
   textoAviso: {fileID: 0}
+  textoObjetivos: {fileID: 0}

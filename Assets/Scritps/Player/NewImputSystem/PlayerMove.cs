@@ -70,7 +70,7 @@ public class PlayerMove : MonoBehaviour
     }
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && controller.isGrounded)
         {
             HandleJump();
             if (animator != null) animator.SetTrigger("Jump");

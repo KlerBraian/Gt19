@@ -23,9 +23,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject bloqueoDePaso;
     [SerializeField] private AudioClip sonidoConstruccion;
 
-    [Header("Vidas")]
-    [SerializeField] private int vidasIniciales = 3;
-    [Tooltip("Dónde reaparece el jugador al perder una vida (no en la última)")]
+    [Header("Reaparición (la vida y el daño están en PlayerSalud)")]
+    [Tooltip("Dónde reaparece el jugador después de un golpe (si sobrevive)")]
     [SerializeField] private Transform puntoReaparicion;
     [Tooltip("Si está apagado, al recibir daño el jugador se queda donde está (el enemigo espera su cooldown antes de volver a golpear)")]
     [SerializeField] private bool reaparecerAlPerderVida = false;
@@ -38,7 +37,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textoTimer;
     [SerializeField] private TextMeshProUGUI textoObjetos;
     [SerializeField] private TextMeshProUGUI textoAviso;
-    [SerializeField] private TextMeshProUGUI textoVidas;
+    [Tooltip("HUD de objetivos: un solo texto con la lista de objetivos")]
+    [SerializeField] private TextMeshProUGUI textoObjetivos;
 
     private float tiempoRestante;
     private int segundoMostrado = -1;
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
     private int objetosRecolectados;
     private bool puenteHabilitado;
     private bool tieneFusible;
-    private int vidasActuales;
+    private PlayerSalud salud;
     private CharacterController controllerJugador;
 
     private void Awake()
@@ -62,16 +62,27 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         tiempoRestante = minutosDuracion * 60f;
-        vidasActuales = vidasIniciales;
         ActualizarUIObjetos();
-        ActualizarUIVidas();
+        ActualizarUIObjetivos();
 
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
         if (puenteConstruido != null) puenteConstruido.SetActive(false);
 
         GameObject jugadorObj = GameObject.FindGameObjectWithTag("Player");
         if (jugadorObj != null)
+        {
             controllerJugador = jugadorObj.GetComponent<CharacterController>();
+            salud = jugadorObj.GetComponent<PlayerSalud>();
+        }
+
+        if (salud == null)
+            salud = FindFirstObjectByType<PlayerSalud>();
+
+        if (salud != null && controllerJugador == null)
+            controllerJugador = salud.GetComponent<CharacterController>();
+
+        if (salud == null)
+            Debug.LogWarning("[GameManager] No hay ningún PlayerSalud en la escena: agregale el script al Player.", this);
     }
 
     private void Update()
@@ -101,6 +112,8 @@ public class GameManager : MonoBehaviour
 
         if (objetosRecolectados >= totalObjetosNecesarios)
             HabilitarPuente();
+
+        ActualizarUIObjetivos();
     }
 
     private void HabilitarPuente()
@@ -139,6 +152,7 @@ public class GameManager : MonoBehaviour
     {
         if (partidaTerminada) return;
         tieneFusible = true;
+        ActualizarUIObjetivos();
     }
     public void IntentarEscapar()
     {
@@ -163,24 +177,58 @@ public class GameManager : MonoBehaviour
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
     }
 
-    // ---------- VIDAS ----------
+    // ---------- DAÑO AL JUGADOR ----------
+
     public void JugadorAtrapado()
     {
+        Debug.Log("[GameManager] El enemigo llamó a JugadorAtrapado (le llegó el golpe).");
+
         if (partidaTerminada) return;
 
-        vidasActuales--;
-        ActualizarUIVidas();
+        if (salud == null)
+        {
+            Debug.LogWarning("[GameManager] Llegó el golpe, pero no hay PlayerSalud: el Player necesita el tag 'Player' y el script PlayerSalud.", this);
+            return;
+        }
 
-        if (vidasActuales <= 0)
-            Derrota("¡El bicho te atrapó y se acabaron tus vidas!");
-        else if (reaparecerAlPerderVida)
+        bool recibioDaño = salud.RecibirDaño(salud.DañoPorGolpe);
+
+        if (recibioDaño && !salud.EstaMuerto && reaparecerAlPerderVida)
             ReaparecerJugador();
     }
 
-    private void ActualizarUIVidas()
+    public void JugadorMurio()
     {
-        if (textoVidas != null)
-            textoVidas.text = $"Vidas: {vidasActuales}/{vidasIniciales}";
+        Derrota("¡El bicho te mató!");
+    }
+
+    // ---------- HUD DE OBJETIVOS ----------
+
+    private void ActualizarUIObjetivos()
+    {
+        if (textoObjetivos == null) return;
+
+        bool hayActivo = false;
+        string texto = "<b>OBJETIVOS</b>\n";
+        texto += LineaObjetivo($"Juntar materiales del puente ({objetosRecolectados}/{totalObjetosNecesarios})", puenteHabilitado, ref hayActivo);
+        texto += LineaObjetivo("Cruzar el puente y encontrar el fusible", tieneFusible, ref hayActivo);
+        texto += LineaObjetivo("Activar la radio en la torre", false, ref hayActivo);
+
+        textoObjetivos.text = texto;
+    }
+
+    private static string LineaObjetivo(string descripcion, bool cumplido, ref bool hayActivo)
+    {
+        if (cumplido)
+            return $"<color=#8A8A8A><s>[X] {descripcion}</s></color>\n";
+
+        if (!hayActivo)
+        {
+            hayActivo = true;
+            return $"<color=#FFD54F>[ ] {descripcion}</color>\n";
+        }
+
+        return $"[ ] {descripcion}\n";
     }
 
     private void ReaparecerJugador()
