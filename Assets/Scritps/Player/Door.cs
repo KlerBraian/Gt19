@@ -33,7 +33,7 @@ public class Door : MonoBehaviour, IInteractuable
 
         AudioClip sonido = abrir ? sonidoAlAbrir : sonidoAlCerrar;
         if (sonido != null)
-            AudioSource.PlayClipAtPoint(sonido, transform.position);
+            AudioSource.PlayClipAtPoint(sonido, transform.position, 0.3f);
 
         if (abrir && efectoParticulas != null)
             Instantiate(efectoParticulas, transform.position, Quaternion.identity);
