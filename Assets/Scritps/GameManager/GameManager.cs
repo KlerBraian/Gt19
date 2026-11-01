@@ -8,25 +8,19 @@ public class GameManager : MonoBehaviour
 
     [Header("Configuración del tiempo")]
     [SerializeField] private float minutosDuracion = 15f;
-    [Tooltip("Segundos restantes a partir de los cuales el timer parpadea en rojo")]
     [SerializeField] private float segundosParaAlarma = 60f;
     [SerializeField] private float velocidadParpadeo = 4f;
     [SerializeField] private Color colorNormal = Color.white;
     [SerializeField] private Color colorAlarma = Color.red;
 
     [Header("Puente (troncos y cuerdas)")]
-    [Tooltip("Cantidad de troncos/cuerdas necesarios para habilitar el puente")]
     [SerializeField] private int totalObjetosNecesarios = 5;
-    [Tooltip("El puente ya armado. Se desactiva al empezar y se activa al juntar todo.")]
     [SerializeField] private GameObject puenteConstruido;
-    [Tooltip("Opcional: muro invisible que se desactiva al construir el puente")]
     [SerializeField] private GameObject bloqueoDePaso;
     [SerializeField] private AudioClip sonidoConstruccion;
 
-    [Header("Reaparición (la vida y el daño están en PlayerSalud)")]
-    [Tooltip("Dónde reaparece el jugador después de un golpe (si sobrevive)")]
+    [Header("Punto de aparición (la vida y el daño están en PlayerSalud)")]
     [SerializeField] private Transform puntoReaparicion;
-    [Tooltip("Si está apagado, al recibir daño el jugador se queda donde está (el enemigo espera su cooldown antes de volver a golpear)")]
     [SerializeField] private bool reaparecerAlPerderVida = false;
 
     [Header("Escenas (nombres exactos, agregadas en Build Profiles)")]
@@ -37,7 +31,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textoTimer;
     [SerializeField] private TextMeshProUGUI textoObjetos;
     [SerializeField] private TextMeshProUGUI textoAviso;
-    [Tooltip("HUD de objetivos: un solo texto con la lista de objetivos")]
     [SerializeField] private TextMeshProUGUI textoObjetivos;
 
     private float tiempoRestante;
@@ -83,6 +76,8 @@ public class GameManager : MonoBehaviour
 
         if (salud == null)
             Debug.LogWarning("[GameManager] No hay ningún PlayerSalud en la escena: agregale el script al Player.", this);
+
+        ReaparecerJugador();
     }
 
     private void Update()
@@ -102,7 +97,6 @@ public class GameManager : MonoBehaviour
         ActualizarUITimer();
     }
 
-    // ---------- PUENTE ----------
     public void RecolectarMaterialPuente()
     {
         if (partidaTerminada || puenteHabilitado) return;
@@ -147,7 +141,6 @@ public class GameManager : MonoBehaviour
             textoObjetos.text = $"Materiales: {objetosRecolectados}/{totalObjetosNecesarios}";
     }
 
-    // ---------- FUSIBLE / ESCAPE ----------
     public void RecolectarFusible()
     {
         if (partidaTerminada) return;
@@ -177,12 +170,8 @@ public class GameManager : MonoBehaviour
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
     }
 
-    // ---------- DAÑO AL JUGADOR ----------
-
     public void JugadorAtrapado()
     {
-        Debug.Log("[GameManager] El enemigo llamó a JugadorAtrapado (le llegó el golpe).");
-
         if (partidaTerminada) return;
 
         if (salud == null)
@@ -201,8 +190,6 @@ public class GameManager : MonoBehaviour
     {
         Derrota("¡El bicho te mató!");
     }
-
-    // ---------- HUD DE OBJETIVOS ----------
 
     private void ActualizarUIObjetivos()
     {
@@ -239,8 +226,6 @@ public class GameManager : MonoBehaviour
         controllerJugador.enabled = true;
     }
 
-    // ---------- VICTORIA / DERROTA ----------
-
     private void Victoria()
     {
         if (partidaTerminada) return;
@@ -264,8 +249,6 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
-
-    // ---------- TIMER UI ----------
 
     private void ActualizarUITimer()
     {

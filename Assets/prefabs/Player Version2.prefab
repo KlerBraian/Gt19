@@ -36,6 +36,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1323166461607825824}
+  - {fileID: 6278358634734793901}
   - {fileID: 1251119382037109504}
   - {fileID: 3846153205142056897}
   m_Father: {fileID: 0}
@@ -189,14 +190,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   walkSpeed: 3
   sprintSpeed: 6
+  velocidadGiroPersonaje: 12
   jumpHeight: 1
   gravity: -20
   fallMultiplier: 1.5
-  cameraPivot: {fileID: 4863710569946553328}
+  cameraPivot: {fileID: 1251119382037109504}
+  camara: {fileID: 4863710569946553328}
   mouseSensitivity: 0.1
-  minLookAngle: -80
-  maxLookAngle: 80
+  anguloMinimoCamara: -25
+  anguloMaximoCamara: 65
   ojosTransform: {fileID: 3846153205142056897}
+  evitarParedes: 1
+  radioCamara: 0.25
+  capaColisionCamara:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  suavizadoAcercamiento: 15
+  permitirZoom: 1
+  distanciaMinima: 2.5
+  distanciaMaxima: 8
+  pasoZoom: 0.6
 --- !u!114 &3461274317017979121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2a6d4c1540074143837799e71955add, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractorJugador
-  origenRaycast: {fileID: 4863710569946553328}
+  origenRaycast: {fileID: 3846153205142056897}
   distanciaInteraccion: 2.5
   capaInteractuable:
     serializedVersion: 2
@@ -286,11 +299,10 @@ Transform:
   m_GameObject: {fileID: 2295434060213110529}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 6278358634734793901}
+  m_Children: []
   m_Father: {fileID: 1251119382037109504}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5498354734353461048
@@ -511,7 +523,7 @@ Transform:
   m_GameObject: {fileID: 4539870615132371142}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.8, y: 2.05, z: -2.54}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -544,12 +556,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7660725305699647713}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.8, y: 2.05, z: -2.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4863710569946553328}
+  m_Father: {fileID: 3944761881505831785}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!108 &7714605689439787336
 Light:
