@@ -21,7 +21,7 @@ public class Door : MonoBehaviour, IInteractuable
     private void Update()
     {
         anguloActual = Mathf.MoveTowards(anguloActual, anguloObjetivo, velocidad * Time.deltaTime);
-        transform.rotation = rotacionInicial * Quaternion.Euler(0f, anguloActual, 0f);
+        transform.rotation = rotacionInicial * Quaternion.Euler(0f, 0f, anguloActual);
     }
 
     public string TextoPrompt() => abrir ? "Presiona E para cerrar la puerta" : textoPrompt;

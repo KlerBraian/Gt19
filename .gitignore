@@ -73,3 +73,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+Assets/DownloadAssets/ObjectiveEnvironment_Assets/Realistic Terrain Textures Lite/Textures/Ground001.tif
+Assets/DownloadAssets/ObjectiveEnvironment_Assets/Realistic Terrain Textures Lite/Textures/Ground001_N.png
+Assets/DownloadAssets/ObjectiveEnvironment_Assets/Realistic Terrain Textures Lite/Scenes/TerrainDATA/Terrain.asset
