@@ -1,56 +1,46 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     [Header("Configuración del tiempo")]
-    [Tooltip("Duración total en minutos")]
     [SerializeField] private float minutosDuracion = 15f;
-    [Tooltip("Segundos restantes a partir de los cuales el timer parpadea en rojo")]
     [SerializeField] private float segundosParaAlarma = 60f;
-    [Tooltip("Velocidad del parpadeo (más alto = más rápido)")]
     [SerializeField] private float velocidadParpadeo = 4f;
     [SerializeField] private Color colorNormal = Color.white;
     [SerializeField] private Color colorAlarma = Color.red;
-    private float tiempoRestante;
-    private bool partidaTerminada = false;
 
     [Header("Puente (troncos y cuerdas)")]
-    [Tooltip("Cantidad de troncos/cuerdas necesarios para habilitar el puente")]
     [SerializeField] private int totalObjetosNecesarios = 5;
-    private int objetosRecolectados = 0;
-    private bool puenteHabilitado = false;
+    [SerializeField] private GameObject puenteConstruido;
+    [SerializeField] private GameObject bloqueoDePaso;
+    [SerializeField] private AudioClip sonidoConstruccion;
 
-    [Header("Fusible / escape")]
-    private bool tieneFusible = false;
-
-    [Header("Vidas")]
-    [SerializeField] private int vidasIniciales = 3;
-    private int vidasActuales;
-    [Tooltip("Dónde reaparece el jugador después de perder una vida (no en la última)")]
+    [Header("Punto de aparición (la vida y el daño están en PlayerSalud)")]
     [SerializeField] private Transform puntoReaparicion;
-    private CharacterController controllerJugador;
+    [SerializeField] private bool reaparecerAlPerderVida = false;
 
-    [Header("Escenas")]
-    [Tooltip("Nombre exacto de la escena de Victoria (debe estar en Build Settings)")]
+    [Header("Escenas (nombres exactos, agregadas en Build Profiles)")]
     [SerializeField] private string escenaVictoria = "Victoria";
-    [Tooltip("Nombre exacto de la escena de Derrota (debe estar en Build Settings)")]
     [SerializeField] private string escenaDerrota = "Derrota";
 
-    [Header("UI (opcional, asigná en el Inspector)")]
+    [Header("UI (opcional)")]
     [SerializeField] private TextMeshProUGUI textoTimer;
     [SerializeField] private TextMeshProUGUI textoObjetos;
     [SerializeField] private TextMeshProUGUI textoAviso;
-    [SerializeField] private TextMeshProUGUI textoVidas;
+    [SerializeField] private TextMeshProUGUI textoObjetivos;
 
-    [Header("Eventos")]
-    public Action OnPuenteListo;
-    public Action<bool> OnFusibleCambio; 
-    public Action OnVidaPerdida; 
-    public Action OnDerrota;
+    private float tiempoRestante;
+    private int segundoMostrado = -1;
+    private bool partidaTerminada;
+    private int objetosRecolectados;
+    private bool puenteHabilitado;
+    private bool tieneFusible;
+    private PlayerSalud salud;
+    private CharacterController controllerJugador;
 
     private void Awake()
     {
@@ -65,14 +55,29 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         tiempoRestante = minutosDuracion * 60f;
-        vidasActuales = vidasIniciales;
         ActualizarUIObjetos();
-        ActualizarUIVidas();
+        ActualizarUIObjetivos();
+
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
+        if (puenteConstruido != null) puenteConstruido.SetActive(false);
 
         GameObject jugadorObj = GameObject.FindGameObjectWithTag("Player");
         if (jugadorObj != null)
+        {
             controllerJugador = jugadorObj.GetComponent<CharacterController>();
+            salud = jugadorObj.GetComponent<PlayerSalud>();
+        }
+
+        if (salud == null)
+            salud = FindFirstObjectByType<PlayerSalud>();
+
+        if (salud != null && controllerJugador == null)
+            controllerJugador = salud.GetComponent<CharacterController>();
+
+        if (salud == null)
+            Debug.LogWarning("[GameManager] No hay ningún PlayerSalud en la escena: agregale el script al Player.", this);
+
+        ReaparecerJugador();
     }
 
     private void Update()
@@ -92,7 +97,6 @@ public class GameManager : MonoBehaviour
         ActualizarUITimer();
     }
 
-    // ---------- PUENTE (troncos / cuerdas) ----------
     public void RecolectarMaterialPuente()
     {
         if (partidaTerminada || puenteHabilitado) return;
@@ -101,16 +105,34 @@ public class GameManager : MonoBehaviour
         ActualizarUIObjetos();
 
         if (objetosRecolectados >= totalObjetosNecesarios)
-        {
             HabilitarPuente();
-        }
+
+        ActualizarUIObjetivos();
     }
 
     private void HabilitarPuente()
     {
         puenteHabilitado = true;
-        Debug.Log("Puente habilitado: ya podés cruzar.");
-        OnPuenteListo?.Invoke();
+
+        if (puenteConstruido != null)
+        {
+            puenteConstruido.SetActive(true);
+
+            if (!puenteConstruido.activeInHierarchy)
+                Debug.LogWarning("[GameManager] El puente se activó pero sigue oculto: algún objeto padre está desactivado.", puenteConstruido);
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] Falta asignar 'Puente Construido' en el Inspector.", this);
+        }
+
+        if (bloqueoDePaso != null) bloqueoDePaso.SetActive(false);
+
+        if (sonidoConstruccion != null)
+        {
+            Vector3 posicion = puenteConstruido != null ? puenteConstruido.transform.position : transform.position;
+            AudioSource.PlayClipAtPoint(sonidoConstruccion, posicion);
+        }
     }
 
     private void ActualizarUIObjetos()
@@ -119,36 +141,24 @@ public class GameManager : MonoBehaviour
             textoObjetos.text = $"Materiales: {objetosRecolectados}/{totalObjetosNecesarios}";
     }
 
-    public bool PuenteEstaHabilitado() => puenteHabilitado;
-
-    // ---------- FUSIBLE / ESCAPE ----------
     public void RecolectarFusible()
     {
         if (partidaTerminada) return;
-
         tieneFusible = true;
-        Debug.Log("Fusible recolectado.");
-        OnFusibleCambio?.Invoke(true);
+        ActualizarUIObjetivos();
     }
-
-    public bool TieneFusible() => tieneFusible;
     public void IntentarEscapar()
     {
         if (partidaTerminada) return;
 
-        if (tieneFusible)
-        {
-            Victoria();
-        }
-        else
-        {
-            MostrarAviso("Te falta el fusible para activar la radio.");
-        }
+        if (tieneFusible) Victoria();
+        else MostrarAviso("Te falta el fusible para activar la radio.");
     }
 
     private void MostrarAviso(string mensaje)
     {
         if (textoAviso == null) return;
+
         textoAviso.text = mensaje;
         textoAviso.gameObject.SetActive(true);
         CancelInvoke(nameof(OcultarAviso));
@@ -160,30 +170,52 @@ public class GameManager : MonoBehaviour
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
     }
 
-    // ---------- MUERTE POR ENEMIGO ----------
     public void JugadorAtrapado()
     {
         if (partidaTerminada) return;
 
-        vidasActuales--;
-        ActualizarUIVidas();
+        if (salud == null)
+        {
+            Debug.LogWarning("[GameManager] Llegó el golpe, pero no hay PlayerSalud: el Player necesita el tag 'Player' y el script PlayerSalud.", this);
+            return;
+        }
 
-        if (vidasActuales <= 0)
-        {
-            Derrota("¡El bicho te atrapó y se acabaron tus vidas!");
-        }
-        else
-        {
-            Debug.Log($"Te atrapó el bicho. Vidas restantes: {vidasActuales}");
+        bool recibioDaño = salud.RecibirDaño(salud.DañoPorGolpe);
+
+        if (recibioDaño && !salud.EstaMuerto && reaparecerAlPerderVida)
             ReaparecerJugador();
-            OnVidaPerdida?.Invoke();
-        }
     }
 
-    private void ActualizarUIVidas()
+    public void JugadorMurio()
     {
-        if (textoVidas != null)
-            textoVidas.text = $"Vidas: {vidasActuales}/{vidasIniciales}";
+        Derrota("¡El bicho te mató!");
+    }
+
+    private void ActualizarUIObjetivos()
+    {
+        if (textoObjetivos == null) return;
+
+        bool hayActivo = false;
+        string texto = "<b>OBJETIVOS</b>\n";
+        texto += LineaObjetivo($"Juntar materiales del puente ({objetosRecolectados}/{totalObjetosNecesarios})", puenteHabilitado, ref hayActivo);
+        texto += LineaObjetivo("Cruzar el puente y encontrar el fusible", tieneFusible, ref hayActivo);
+        texto += LineaObjetivo("Activar la radio en la torre", false, ref hayActivo);
+
+        textoObjetivos.text = texto;
+    }
+
+    private static string LineaObjetivo(string descripcion, bool cumplido, ref bool hayActivo)
+    {
+        if (cumplido)
+            return $"<color=#8A8A8A><s>[X] {descripcion}</s></color>\n";
+
+        if (!hayActivo)
+        {
+            hayActivo = true;
+            return $"<color=#FFD54F>[ ] {descripcion}</color>\n";
+        }
+
+        return $"[ ] {descripcion}\n";
     }
 
     private void ReaparecerJugador()
@@ -194,16 +226,11 @@ public class GameManager : MonoBehaviour
         controllerJugador.enabled = true;
     }
 
-    public int GetVidasActuales() => vidasActuales;
-
-    // ---------- VICTORIA / DERROTA ----------
-
-    public void Victoria()
+    private void Victoria()
     {
         if (partidaTerminada) return;
         partidaTerminada = true;
-
-        Debug.Log("VICTORIA: escapaste con el fusible.");
+        LiberarCursor();
         SceneManager.LoadScene(escenaVictoria);
     }
 
@@ -213,25 +240,25 @@ public class GameManager : MonoBehaviour
         partidaTerminada = true;
 
         Debug.Log("DERROTA: " + motivo);
-        OnDerrota?.Invoke();
+        LiberarCursor();
         SceneManager.LoadScene(escenaDerrota);
     }
 
-    // ---------- UTILIDAD ----------
-
-    public void ReiniciarPartida()
+    private static void LiberarCursor()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void ActualizarUITimer()
     {
         if (textoTimer == null) return;
-
-        int minutos = Mathf.FloorToInt(tiempoRestante / 60f);
-        int segundos = Mathf.FloorToInt(tiempoRestante % 60f);
-        textoTimer.text = $"{minutos:00}:{segundos:00}";
+        int segundos = Mathf.FloorToInt(tiempoRestante);
+        if (segundos != segundoMostrado)
+        {
+            segundoMostrado = segundos;
+            textoTimer.text = $"{segundos / 60:00}:{segundos % 60:00}";
+        }
 
         if (tiempoRestante <= segundosParaAlarma)
         {
@@ -244,6 +271,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public float GetTiempoRestante() => tiempoRestante;
     public bool EstaTerminada() => partidaTerminada;
+    public bool PuenteHabilitado => puenteHabilitado;
 }

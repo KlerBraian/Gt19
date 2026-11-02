@@ -3,58 +3,113 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(PlayerInput))]
-
 public class PlayerMove : MonoBehaviour
 {
-    [Header("Referencias")]
-    [Tooltip("La camara que sigue al jugador. Si lo dejas vacio, busca la MainCamera.")]
     private CharacterController controller;
 
-    [Header("Moviemiento")]
+    [Header("Movimiento")]
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float sprintSpeed = 6f;
-    [Tooltip("Que tan rapido rota el personaje hacia la direccion de moviemiento (menor = mas rapido).")]
-    private Vector2 moveInput; //REFERENCIA AL MOVIMIENTO
-    private float currentSpeed; //VELOCIDAD ACTUAL
-    private bool isSprinting; //ESTA CORRIENDO (BOOL)
+    [Tooltip("Qué tan rápido gira el personaje hacia donde camina (mayor = más rápido)")]
+    [SerializeField] private float velocidadGiroPersonaje = 12f;
+    private Vector2 moveInput;
+    private float currentSpeed;
+    private bool isSprinting;
 
     [Header("Salto")]
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float gravity = -20;
     private float verticalVelocity;
-    [SerializeField] private float fallMultiplier = 1.5f; // Hace que la caída sea más rápida que el salto
+    [SerializeField] private float fallMultiplier = 1.5f;
 
-
-    [Header("Vista Camara")]
+    [Header("Cámara orbital")]
+    [Tooltip("El objeto 'puntoDeCamara': queda a la altura de la cabeza y la cámara cuelga de él, hacia atrás.")]
     [SerializeField] private Transform cameraPivot;
+    [Tooltip("La cámara (hija del pivote). Vacío = la Main Camera.")]
+    [SerializeField] private Transform camara;
     [SerializeField] private float mouseSensitivity = 0.1f;
-    [SerializeField] private float minLookAngle = -80f;
-    [SerializeField] private float maxLookAngle = 80f;
-    private Vector2 lookInput;
-    private float pitch;
+    [Tooltip("Cuánto puede mirar hacia arriba (negativo = la cámara baja)")]
+    [SerializeField] private float anguloMinimoCamara = -25f;
+    [Tooltip("Cuánto puede mirar hacia abajo (la cámara sube)")]
+    [SerializeField] private float anguloMaximoCamara = 65f;
+    [Tooltip("Opcional: apunta a donde mira la cámara. Usalo como origen del rayo del interactor.")]
     [SerializeField] private Transform ojosTransform;
 
-    private Animator animator;
+    [Header("Colisión de la cámara")]
+    [SerializeField] private bool evitarParedes = true;
+    [SerializeField] private float radioCamara = 0.25f;
+    [Tooltip("Capas que acercan la cámara. Si la cámara se pega al personaje sin motivo, sacá la capa del Player.")]
+    [SerializeField] private LayerMask capaColisionCamara = ~0;
+    [SerializeField] private float suavizadoAcercamiento = 15f;
 
+    [Header("Zoom (rueda del mouse)")]
+    [SerializeField] private bool permitirZoom = true;
+    [Tooltip("Lo más cerca que puede quedar la cámara del personaje")]
+    [SerializeField] private float distanciaMinima = 1.5f;
+    [Tooltip("Lo más lejos que puede quedar")]
+    [SerializeField] private float distanciaMaxima = 7f;
+    [Tooltip("Cuánto se acerca o se aleja con cada tick de la rueda")]
+    [SerializeField] private float pasoZoom = 0.6f;
+
+    private float yaw;
+    private float pitch;
+    private Vector2 lookInput;
+    private Vector3 direccionLocalCamara;
+    private float distanciaObjetivo;
+    private float distanciaActual;
+    private bool camaraLista;
+
+    private Animator animator;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-
     }
+
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        animator=GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
+
+        if (camara == null && Camera.main != null)
+            camara = Camera.main.transform;
+
+        if (cameraPivot == null)
+        {
+            Debug.LogWarning("[PlayerMove] Falta arrastrar 'puntoDeCamara' al campo Camera Pivot.", this);
+            return;
+        }
+        yaw = cameraPivot.eulerAngles.y;
+        pitch = cameraPivot.eulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;
+
+        if (camara != null && camara.IsChildOf(cameraPivot))
+        {
+            Vector3 offset = camara.localPosition;
+            distanciaObjetivo = Mathf.Clamp(offset.magnitude, distanciaMinima, distanciaMaxima);
+            distanciaActual = distanciaObjetivo;
+
+            if (offset.magnitude < 0.5f)
+            {
+                Debug.LogWarning("[PlayerMove] La cámara está pegada al pivote. Para tercera persona ponele en Position un Z negativo, por ejemplo (0, 0.5, -4).", camara);
+                direccionLocalCamara = Vector3.back;
+            }
+            else
+            {
+                direccionLocalCamara = offset.normalized;
+            }
+
+            camaraLista = true;
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerMove] La cámara tiene que ser hija de 'puntoDeCamara' para orbitar.", this);
+        }
     }
 
-
-
-
     ///////////////////// UNITY EVENTS ////////////////////////
-    
-  
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
@@ -64,49 +119,108 @@ public class PlayerMove : MonoBehaviour
     {
         lookInput = context.ReadValue<Vector2>();
     }
+
     public void OnSprint(InputAction.CallbackContext context)
     {
         isSprinting = context.ReadValueAsButton();
     }
+
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && controller.isGrounded)
         {
             HandleJump();
-            animator.SetTrigger("Jump");
+            if (animator != null) animator.SetTrigger("Jump");
         }
     }
- 
 
+    ////////////////////////// UPDATE //////////////////////////////////////
 
-    ////////////////////////// UPDATE//////////////////////////////////////
     private void Update()
     {
-        HandleLook(); 
+        GameManager gm = GameManager.Instance;
+        if (gm != null && gm.EstaTerminada()) return;
+
+        HandleLook();
+        HandleZoom();
         HandleMove();
         HandleGravity();
-        animator.SetBool("IsGrounded", controller.isGrounded);
+        if (animator != null) animator.SetBool("IsGrounded", controller.isGrounded);
     }
 
+    private void HandleZoom()
+    {
+        if (!permitirZoom || !camaraLista) return;
 
-    private void HandleJump() // SALTO
+        Mouse mouse = Mouse.current;
+        if (mouse == null) return;
+        float rueda = mouse.scroll.ReadValue().y;
+        if (Mathf.Approximately(rueda, 0f)) return;
+
+        distanciaObjetivo = Mathf.Clamp(distanciaObjetivo - Mathf.Sign(rueda) * pasoZoom,
+                                        distanciaMinima, distanciaMaxima);
+    }
+
+    private void LateUpdate()
+    {
+        if (cameraPivot == null) return;
+
+        Quaternion rotacion = Quaternion.Euler(pitch, yaw, 0f);
+        cameraPivot.rotation = rotacion;
+
+        if (ojosTransform != null)
+            ojosTransform.rotation = rotacion;
+
+        if (camaraLista)
+            AcomodarCamara();
+    }
+
+    private void AcomodarCamara()
+    {
+        float distanciaLibre = distanciaObjetivo;
+
+        if (evitarParedes)
+        {
+            Vector3 direccionMundo = cameraPivot.TransformDirection(direccionLocalCamara);
+
+            if (Physics.SphereCast(cameraPivot.position, radioCamara, direccionMundo, out RaycastHit hit,
+                                   distanciaObjetivo, capaColisionCamara, QueryTriggerInteraction.Ignore))
+            {
+                distanciaLibre = Mathf.Max(hit.distance - 0.05f, 0.4f);
+            }
+        }
+
+        float velocidad = distanciaLibre < distanciaActual ? suavizadoAcercamiento * 2f : suavizadoAcercamiento;
+        distanciaActual = Mathf.Lerp(distanciaActual, distanciaLibre, 1f - Mathf.Exp(-velocidad * Time.deltaTime));
+
+        camara.localPosition = direccionLocalCamara * distanciaActual;
+    }
+
+    private void HandleLook()
+    {
+
+        yaw += lookInput.x * mouseSensitivity;
+        pitch -= lookInput.y * mouseSensitivity;
+        pitch = Mathf.Clamp(pitch, anguloMinimoCamara, anguloMaximoCamara);
+
+        lookInput = Vector2.zero;
+    }
+
+    private void HandleJump()
     {
         if (controller.isGrounded)
         {
-            verticalVelocity = Mathf.Sqrt(
-                jumpHeight * -2f * gravity
-            );
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
     }
 
-    private void HandleGravity() //MANEJO DE GRAVEDAD
+    private void HandleGravity()
     {
         if (controller.isGrounded && verticalVelocity < 0f)
         {
             verticalVelocity = -2f;
         }
 
-        // Si el personaje está cayendo, multiplicamos la gravedad para una caída más fluida y menos flotante
         float currentGravity = gravity;
         if (verticalVelocity < 0f)
         {
@@ -115,81 +229,36 @@ public class PlayerMove : MonoBehaviour
 
         verticalVelocity += currentGravity * Time.deltaTime;
     }
-    
-    private void HandleMove() //MOVIMIENTO
+
+    private void HandleMove()
     {
-        Vector3 forward = transform.forward;
-        Vector3 right = transform.right;
 
-        forward.y = 0f;
-        right.y = 0f;
+        Quaternion giroCamara = Quaternion.Euler(0f, yaw, 0f);
+        Vector3 direccion = giroCamara * new Vector3(moveInput.x, 0f, moveInput.y);
 
-        forward.Normalize();
-        right.Normalize();
-
-        Vector3 horizontalMovement = (forward * moveInput.y + right * moveInput.x);
-        currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
-        if (moveInput.magnitude > 0f)
+        if (moveInput.magnitude > 0.1f)
         {
-            // Si se mueve, decide si corre o camina
             currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+
+            Quaternion objetivo = Quaternion.LookRotation(direccion);
+            transform.rotation = Quaternion.Slerp(transform.rotation, objetivo,
+                                                  1f - Mathf.Exp(-velocidadGiroPersonaje * Time.deltaTime));
         }
         else
         {
-            // Si NO se mueve, la velocidad es 0
             currentSpeed = 0f;
+            direccion = Vector3.zero;
         }
 
-        Vector3 finalMovement = horizontalMovement * currentSpeed;
-
+        Vector3 finalMovement = direccion.normalized * currentSpeed;
         finalMovement.y = verticalVelocity;
 
         controller.Move(finalMovement * Time.deltaTime);
+
         if (animator != null)
         {
-                animator.SetFloat("Walk", currentSpeed);
+            animator.SetFloat("Walk", currentSpeed);
+            animator.SetBool("isRun", currentSpeed == sprintSpeed);
         }
-        if (currentSpeed == sprintSpeed)
-        {
-            animator.SetBool("isRun", true);
-        }
-        else animator.SetBool("isRun", false);
-    }
-
-    //private void HandleLook()   // VISTA CAMARA
-    //{
-    //    transform.Rotate(
-    //        Vector3.up,
-    //        lookInput.x * mouseSensitivity
-    //    );
-
-    //    pitch -= lookInput.y * mouseSensitivity;
-    //    pitch = Mathf.Clamp(pitch, minLookAngle, maxLookAngle);
-
-    //    cameraPivot.localRotation =
-    //        Quaternion.Euler(pitch, 0f, 0f);
-
-    //    lookInput = Vector2.zero;
-    //}
-    private void HandleLook()   // VISTA CAMARA
-    {
- 
-        transform.Rotate(
-            Vector3.up,
-            lookInput.x * mouseSensitivity
-        );
-
-        pitch -= lookInput.y * mouseSensitivity;
-        pitch = Mathf.Clamp(pitch, minLookAngle, maxLookAngle);
-
-        cameraPivot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-
-        if (ojosTransform != null)
-        {
-            ojosTransform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
-
-        }
-
-        lookInput = Vector2.zero;
     }
 }

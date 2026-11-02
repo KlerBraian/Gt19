@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 5872140895770784010}
   - component: {fileID: 3084514445478697261}
   - component: {fileID: 1353032649868471605}
-  - component: {fileID: 1860455717307596920}
   - component: {fileID: 222156807844725986}
+  - component: {fileID: 188999684357348535}
   m_Layer: 10
   m_Name: palos
   m_TagString: Untagged
@@ -92,21 +92,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1860455717307596920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3584612170076974992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 336bd933193478b4990d40d9f2e9fd7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Coleccionable
-  textoPrompt: "Presion\xE1 E para recoger"
-  sonidoAlRecoger: {fileID: 0}
-  efectoParticulas: {fileID: 0}
 --- !u!64 &222156807844725986
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -129,3 +114,23 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &188999684357348535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3584612170076974992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34d9d9febfd8c9d4b97aac092f79b113, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactuable
+  tipo: 0
+  textoPrompt: "Presion\xE1 E para interactuar"
+  textoPromptCerrar: "Presion\xE1 E para cerrar la puerta"
+  sonido: {fileID: 0}
+  sonidoAlCerrar: {fileID: 0}
+  efectoParticulas: {fileID: 0}
+  velocidad: 100
+  anguloApertura: 90
