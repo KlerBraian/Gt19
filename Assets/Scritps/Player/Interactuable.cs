@@ -56,7 +56,7 @@ public class Interactuable : MonoBehaviour
     private void Update()
     {
         anguloActual = Mathf.MoveTowards(anguloActual, anguloObjetivo, velocidad * Time.deltaTime);
-        transform.localRotation = rotacionInicial * Quaternion.Euler(0f, 0f, anguloActual);
+        transform.localRotation = rotacionInicial * Quaternion.Euler(0f, anguloActual, 0f);
 
         if (Mathf.Approximately(anguloActual, anguloObjetivo))
             enabled = false;
