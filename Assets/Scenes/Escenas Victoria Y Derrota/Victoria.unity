@@ -601,6 +601,90 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005840619}
   m_CullTransparentMesh: 1
+--- !u!1 &1005975417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1005975419}
+  - component: {fileID: 1005975418}
+  m_Layer: 0
+  m_Name: Audio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1005975418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005975417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 674883bb27b283240b9570dcd9db6518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PantallaUI
+  musica: {fileID: 8300000, guid: abaa552b913d87145b55763be600f798, type: 3}
+  volumenMusica: 0.5
+  musicaEnBucle: 0
+  segundosEntradaMusica: 0
+  sonidoHover: {fileID: 0}
+  sonidoClick: {fileID: 0}
+  volumenBotones: 0.6
+  escenaSiguiente: Game
+  texto: {fileID: 0}
+  textoPagina: {fileID: 0}
+  textoBoton: {fileID: 0}
+  paginas:
+  - "<size=130%><b>EST\xC1S SOLO EN EL BOSQUE</b></size>\n\nTu auto qued\xF3 tirado
+    en la ruta y la noche cay\xF3 hace horas.\n\nLa \xFAnica salida es la <color=#FFD54F>torre
+    de radio</color> que se ve del otro lado del r\xEDo, pero el puente est\xE1 roto.\n\nTen\xE9s
+    <color=#FFD54F>15 minutos</color>. Si se acaba el tiempo, no vas a salir de ac\xE1."
+  - "<size=130%><b>QU\xC9 TEN\xC9S QUE HACER</b></size>\n\n<color=#FFD54F>1.</color>
+    Junt\xE1 los <b>5 troncos y cuerdas</b> que hay por el bosque para reparar el
+    puente.\n\n<color=#FFD54F>2.</color> Cruz\xE1 el puente y encontr\xE1 el <b>fusible</b>.\n\n<color=#FFD54F>3.</color>
+    Lleg\xE1 a la torre y apret\xE1 <b>E</b> sobre el bot\xF3n de la radio para pedir
+    ayuda."
+  - "<size=130%><b>NO EST\xC1S SOLO</b></size>\n\nAlgo vive en este bosque. Patrulla
+    de noche y si te ve, te persigue. Cada golpe te saca vida.\n\nSi te perd\xE9s
+    de vista, te busca un rato y vuelve a patrullar. Escondete, apag\xE1 la linterna
+    y no corras si no hace falta: <color=#FFD54F>los pasos se escuchan</color>.\n\nPero
+    cuando termines el puente, <color=#FF5A4F>va a venir directo por vos</color>.
+    Ya no se va a dar por vencido."
+  - "<size=130%><b>CONTROLES</b></size>\n\n<color=#FFD54F>W A S D</color>  \u2014 
+    moverte\n<color=#FFD54F>Shift</color>  \u2014  correr\n<color=#FFD54F>Espacio</color> 
+    \u2014  saltar\n<color=#FFD54F>Mouse</color>  \u2014  mover la c\xE1mara\n<color=#FFD54F>Rueda
+    del mouse</color>  \u2014  acercar o alejar la c\xE1mara\n<color=#FFD54F>F</color> 
+    \u2014  prender o apagar la linterna\n<color=#FFD54F>E</color>  \u2014  agarrar,
+    abrir y usar\n\nMucha suerte."
+  caracteresPorSegundo: 45
+  caracteresPorSonido: 2
+  sonidosTecla: []
+  volumenTecla: 0.5
+  teclaSiguiente: 1
+  teclaAlternativa: 2
+  teclaSaltar: 60
+--- !u!4 &1005975419
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005975417}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1052.6763, y: 478.0066, z: -119.38052}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1144644170
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,7 +895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7849d20519d7d9e4b9930bbc03db72ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuEscenas
-  escenaDeJuego: PlayerImputTest
+  escenaDeJuego: Terrain
   escenaMenuPrincipal: Menu
 --- !u!1 &1289142551
 GameObject:
@@ -1297,3 +1381,4 @@ SceneRoots:
   - {fileID: 1556080219}
   - {fileID: 1226737054}
   - {fileID: 484695157}
+  - {fileID: 1005975419}
