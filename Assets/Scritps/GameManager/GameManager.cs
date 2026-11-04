@@ -334,7 +334,7 @@ public class GameManager : MonoBehaviour
 
     public void JugadorMurio()
     {
-        Derrota("¡El bicho te mató!");
+        Derrota("¡Moriste!");
     }
 
     private void ActualizarUIObjetivos()
@@ -371,6 +371,7 @@ public class GameManager : MonoBehaviour
         controllerJugador.transform.position = puntoReaparicion.position;
         controllerJugador.enabled = true;
     }
+
 
     private void Victoria()
     {

@@ -58,7 +58,7 @@ public class PlayerMove : MonoBehaviour
     private float distanciaObjetivo;
     private float distanciaActual;
     private bool camaraLista;
-
+    private GameManager gameManager;
     private Animator animator;
 
     private void Awake()
@@ -261,4 +261,14 @@ public class PlayerMove : MonoBehaviour
             animator.SetBool("isRun", currentSpeed == sprintSpeed);
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Rio"))
+        {      
+            gameManager.JugadorMurio();
+          
+        }
+    }
+  
 }
