@@ -7,16 +7,6 @@ public enum TipoInteraccion
     Escape,         // botón de la torre: gana si tenés el fusible
     Puerta          // se abre y se cierra
 }
-
-/// <summary>
-/// Reemplaza a Coleccionable, Fusible, InteraccionE y Door.
-/// Se pone en cualquier objeto con el que el jugador interactúe mirándolo y
-/// apretando E (lo detecta InteractorJugador). Elegí el comportamiento en "Tipo".
-///
-/// El Collider (no trigger) puede estar en este mismo objeto o en un hijo
-/// (por ejemplo, el mesh de la puerta colgando de la bisagra).
-/// Para la puerta, este script va en el objeto vacío que hace de bisagra.
-/// </summary>
 public class Interactuable : MonoBehaviour
 {
     [SerializeField] private TipoInteraccion tipo = TipoInteraccion.MaterialPuente;
@@ -48,8 +38,6 @@ public class Interactuable : MonoBehaviour
     {
         rotacionInicial = transform.localRotation;
 
-        // Update solo hace falta mientras la puerta está girando.
-        // Un componente desactivado igual lo encuentra InteractorJugador.
         enabled = false;
     }
 
@@ -87,8 +75,6 @@ public class Interactuable : MonoBehaviour
                 gm.IntentarEscapar();
                 return;
         }
-
-        // Material del puente y fusible: se recogen y desaparecen.
         if (tipo == TipoInteraccion.Fusible)
             gm.RecolectarFusible();
         else

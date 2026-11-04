@@ -37,7 +37,6 @@ public class EnemigoPersigue : MonoBehaviour
     [Header("Búsqueda")]
     [Tooltip("Segundos que busca en el último lugar donde te vio, antes de volver a patrullar")]
     [SerializeField] private float tiempoBusqueda = 4f;
-    [SerializeField] private float velocidadGiroBusqueda = 90f;
 
     [Header("Rugido")]
     [SerializeField] private float duracionRugido = 1.5f;
@@ -314,8 +313,6 @@ public class EnemigoPersigue : MonoBehaviour
     {
         if (esperando)
         {
-            transform.Rotate(0f, velocidadGiroBusqueda * Time.deltaTime, 0f); // mira alrededor
-
             if (Time.time >= finEspera)
                 CambiarEstado(Estado.Patrullando);
         }
