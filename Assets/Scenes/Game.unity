@@ -14182,7 +14182,7 @@ MonoBehaviour:
   sonidoAterrizaje: {fileID: 0}
   sonidoJadeo: {fileID: 8300000, guid: c5fb21acbf635fd41b1a92a203cb65db, type: 3}
   volumenAterrizaje: 0.9
-  volumenJadeo: 0.041
+  volumenJadeo: 0.02
   velocidadCaidaMinima: 4
   segundosCorriendoParaJadear: 4
   intervaloJadeo: 4
@@ -21888,7 +21888,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: cbdcdd5fa0abe6c49b6833577cfcf835, type: 3}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: volumenAparicion
-      value: 0.699
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: centroZonaEnemigo
@@ -23569,7 +23569,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 432132259691918225, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: velocidadPatrulla
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 432132259691918225, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: distanciaDeteccion
@@ -23581,7 +23581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 432132259691918225, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: velocidadPersecucion
-      value: 6.8
+      value: 6.9
       objectReference: {fileID: 0}
     - target: {fileID: 432132259691918225, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: volumenPasosPatrulla
