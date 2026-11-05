@@ -6644,7 +6644,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1585240839342318238, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: m_Name
-      value: Player Version2
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2041081318531525779, guid: 468d41179c31ec746a307fd6af13e981, type: 3}
       propertyPath: walkSpeed
@@ -23107,7 +23107,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 894843c64ca2de44daf8bb58e48aa6ec, type: 3}
     - target: {fileID: 3464385777789515084, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: m_Name
-      value: Enemy Variant
+      value: Enemigo
       objectReference: {fileID: 0}
     - target: {fileID: 3464385777789515086, guid: f52f550c557fd4b46ae3d4662cff392b, type: 3}
       propertyPath: m_LocalScale.x
@@ -23422,7 +23422,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5520012098582440651, guid: 5779067e31f783f46a8d3ce17ffab996, type: 3}
       propertyPath: m_Name
-      value: SafeTower 2
+      value: TorreRadio
       objectReference: {fileID: 0}
     - target: {fileID: 5765561575729263847, guid: 5779067e31f783f46a8d3ce17ffab996, type: 3}
       propertyPath: m_Layer
