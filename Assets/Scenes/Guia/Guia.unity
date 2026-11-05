@@ -637,7 +637,7 @@ MonoBehaviour:
   sonidoHover: {fileID: 8300000, guid: 9994bb1c1d1c1114e9ebf10a5d9f8f8b, type: 3}
   sonidoClick: {fileID: 8300000, guid: 99771ae3e7c18b54095d5b4e050fb100, type: 3}
   volumenBotones: 0.1
-  escenaSiguiente: Terrain
+  escenaSiguiente: Game
   texto: {fileID: 1770782779}
   textoPagina: {fileID: 1106811242}
   textoBoton: {fileID: 545839978}

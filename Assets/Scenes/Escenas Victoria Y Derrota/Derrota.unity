@@ -894,7 +894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7849d20519d7d9e4b9930bbc03db72ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuEscenas
-  escenaDeJuego: Terrain
+  escenaDeJuego: Game
   escenaMenuPrincipal: Menu
 --- !u!1 &1556080217
 GameObject:

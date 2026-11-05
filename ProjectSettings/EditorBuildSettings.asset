@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Guia/Guia.unity
     guid: c2c13a56425c3344bba7afcb46957f62
   - enabled: 1
-    path: Assets/Scenes/Terrain.unity
+    path: Assets/Scenes/Game.unity
     guid: a453283aac478844c8f99ad987654e8c
   - enabled: 1
     path: Assets/Scenes/Escenas Victoria Y Derrota/Victoria.unity
