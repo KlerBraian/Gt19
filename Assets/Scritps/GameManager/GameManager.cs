@@ -21,6 +21,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject puenteConstruido;
     [SerializeField] private AudioClip sonidoConstruccion;
 
+    [Header("Música de tensión (empieza al construir el puente)")]
+    [SerializeField] private AudioClip musicaTension;
+    [SerializeField, Range(0f, 1f)] private float volumenMusicaTension = 0.5f;
+    [SerializeField] private float duracionFundidoMusica = 4f;
+    [SerializeField] private float retrasoMusicaTension = 0.5f;
+
     [Header("Enemigo")]
     [SerializeField] private GameObject enemigo;
     [SerializeField] private bool enemigoEmpiezaOculto = true;
@@ -46,6 +52,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Troncos y sogas (aparecen junto con el enemigo)")]
     [SerializeField] private bool materialesEmpiezanOcultos = true;
+
+    [Header("Fusible (aparece junto con el enemigo, los troncos y las sogas)")]
+    [SerializeField] private bool fusibleEmpiezaOculto = true;
+    [SerializeField] private bool ocultarHudFusibleHastaPuente = true;
 
     [Header("Río")]
     [SerializeField] private Transform nivelDelAgua;
@@ -78,6 +88,7 @@ public class GameManager : MonoBehaviour
     private float proximoDebugZona;
     private string motivoNoVe = "";
     private readonly List<GameObject> materialesOcultos = new List<GameObject>();
+    private readonly List<GameObject> fusiblesOcultos = new List<GameObject>();
     private bool puenteHabilitado;
     private bool tieneFusible;
     private bool zonaUsada;
@@ -86,6 +97,7 @@ public class GameManager : MonoBehaviour
     private CharacterController controllerJugador;
     private Vector3 posicionInicialEnemigo;
     private Quaternion rotacionInicialEnemigo;
+    private AudioSource fuenteMusica;
 
     private bool HayZona => zonaActivacionEnemigo != null || centroZonaEnemigo != null;
 
@@ -109,6 +121,9 @@ public class GameManager : MonoBehaviour
 
         if (materialesEmpiezanOcultos && HayZona)
             RegistrarYOcultarMateriales();
+
+        if (fusibleEmpiezaOculto)
+            RegistrarYOcultarFusibles();
     }
 
     private void OnDestroy()
@@ -135,6 +150,33 @@ public class GameManager : MonoBehaviour
     {
         foreach (GameObject material in materialesOcultos)
             if (material != null) material.SetActive(visibles);
+    }
+
+    private void RegistrarYOcultarFusibles()
+    {
+        fusiblesOcultos.Clear();
+
+        Interactuable[] todos = FindObjectsByType<Interactuable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (Interactuable item in todos)
+        {
+            if (item.Tipo != TipoInteraccion.Fusible) continue;
+
+            fusiblesOcultos.Add(item.gameObject);
+            item.gameObject.SetActive(false);
+        }
+    }
+
+    private void PonerFusibles(bool visibles)
+    {
+        foreach (GameObject fusible in fusiblesOcultos)
+            if (fusible != null) fusible.SetActive(visibles);
+    }
+
+    private void PonerHudFusible(bool visible)
+    {
+        if (textoFusible != null) textoFusible.gameObject.SetActive(visible);
+        if (iconoFusible != null) iconoFusible.gameObject.SetActive(visible);
     }
 
     private void ValidarMateriales()
@@ -164,6 +206,8 @@ public class GameManager : MonoBehaviour
         ActualizarUIFusible();
         ActualizarUIObjetivos();
 
+        if (ocultarHudFusibleHastaPuente) PonerHudFusible(false);
+
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
         if (puenteConstruido != null) puenteConstruido.SetActive(false);
 
@@ -188,7 +232,10 @@ public class GameManager : MonoBehaviour
 
         ValidarMateriales();
 
-        Debug.Log($"[GameManager] Escena '{SceneManager.GetActiveScene().name}' lista | zona: {(HayZona ? "sí" : "NO")} | enemigo: {(enemigo != null ? "sí" : "NO")} | troncos y sogas ocultos: {materialesOcultos.Count} | río: {(nivelDelAgua != null ? "sí" : "NO")}", this);
+        if (fusibleEmpiezaOculto && fusiblesOcultos.Count == 0)
+            Debug.LogWarning("[GameManager] 'Fusible Empieza Oculto' está tildado pero no hay ningún Interactuable con Tipo = Fusible en la escena: si el fusible se sigue viendo, su Interactuable no tiene ese tipo.", this);
+
+        Debug.Log($"[GameManager] Escena '{SceneManager.GetActiveScene().name}' lista | zona: {(HayZona ? "sí" : "NO")} | enemigo: {(enemigo != null ? "sí" : "NO")} | troncos y sogas ocultos: {materialesOcultos.Count} | fusibles ocultos: {fusiblesOcultos.Count} | río: {(nivelDelAgua != null ? "sí" : "NO")}", this);
 
         ReaparecerJugador();
     }
@@ -208,6 +255,7 @@ public class GameManager : MonoBehaviour
         }
 
         ActualizarUITimer();
+        ActualizarMusica();
 
         ChequearAgua();
         if (partidaTerminada) return;
@@ -283,6 +331,40 @@ public class GameManager : MonoBehaviour
 
         if (sonidoInicioCaza != null)
             Invoke(nameof(SonarInicioCaza), retrasoSonidoCaza);
+
+        if (musicaTension != null)
+            Invoke(nameof(EmpezarMusicaTension), retrasoMusicaTension);
+    }
+
+    private void EmpezarMusicaTension()
+    {
+        if (partidaTerminada || musicaTension == null) return;
+
+        if (fuenteMusica == null)
+        {
+            fuenteMusica = gameObject.AddComponent<AudioSource>();
+            fuenteMusica.playOnAwake = false;
+            fuenteMusica.loop = true;
+            fuenteMusica.spatialBlend = 0f;
+            fuenteMusica.clip = musicaTension;
+        }
+
+        fuenteMusica.volume = duracionFundidoMusica <= 0f ? volumenMusicaTension : 0f;
+        fuenteMusica.Play();
+    }
+
+    private void ActualizarMusica()
+    {
+        if (fuenteMusica == null || !fuenteMusica.isPlaying) return;
+
+        if (duracionFundidoMusica <= 0f)
+        {
+            fuenteMusica.volume = volumenMusicaTension;
+            return;
+        }
+
+        float velocidad = volumenMusicaTension / duracionFundidoMusica;
+        fuenteMusica.volume = Mathf.MoveTowards(fuenteMusica.volume, volumenMusicaTension, velocidad * Time.deltaTime);
     }
 
     public bool ActivarEnemigo()
@@ -290,6 +372,8 @@ public class GameManager : MonoBehaviour
         if (partidaTerminada) return false;
 
         PonerMateriales(true);
+        PonerFusibles(true);
+        PonerHudFusible(true);
 
         if (enemigo == null)
         {
@@ -577,6 +661,13 @@ public class GameManager : MonoBehaviour
         if (materialesOcultos.Count > 0)
         {
             PonerMateriales(false);
+            reinicioAlgo = true;
+        }
+
+        if (fusiblesOcultos.Count > 0)
+        {
+            PonerFusibles(false);
+            if (ocultarHudFusibleHastaPuente && !tieneFusible) PonerHudFusible(false);
             reinicioAlgo = true;
         }
 

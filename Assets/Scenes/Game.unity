@@ -388,6 +388,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 780630815}
     m_Modifications:
+    - target: {fileID: 222156807844725986, guid: c0ed15dc26bc6f842a59def3175af814, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1353032649868471605, guid: c0ed15dc26bc6f842a59def3175af814, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -22042,6 +22046,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
+      propertyPath: musicaTension
+      value: 
+      objectReference: {fileID: 8300000, guid: 7b543ecd91b22834c884af0abc0b62b8, type: 3}
+    - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: margenPantalla
       value: 0.4
       objectReference: {fileID: 0}
@@ -22097,6 +22105,10 @@ PrefabInstance:
       propertyPath: sonidoConstruccion
       value: 
       objectReference: {fileID: 8300000, guid: 347a872ac0df4f64db621f025e152095, type: 3}
+    - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
+      propertyPath: volumenMusicaTension
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: distanciaMaximaVision
       value: 100
