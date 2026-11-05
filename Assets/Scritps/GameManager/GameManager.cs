@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int troncosNecesarios = 3;
     [SerializeField] private int sogasNecesarias = 3;
     [SerializeField] private GameObject puenteConstruido;
-    [SerializeField] private GameObject bloqueoDePaso;
     [SerializeField] private AudioClip sonidoConstruccion;
 
     [Header("Enemigo")]
@@ -32,6 +31,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool ocultarEnemigoAlReaparecer = true;
 
     [Header("Zona donde aparece el enemigo")]
+    [SerializeField] private Collider zonaActivacionEnemigo;
     [SerializeField] private Transform centroZonaEnemigo;
     [SerializeField] private float radioZonaEnemigo = 12f;
     [SerializeField] private Transform puntoQueDebeMirar;
@@ -87,6 +87,8 @@ public class GameManager : MonoBehaviour
     private Vector3 posicionInicialEnemigo;
     private Quaternion rotacionInicialEnemigo;
 
+    private bool HayZona => zonaActivacionEnemigo != null || centroZonaEnemigo != null;
+
     private void Awake()
     {
         if (Instance != null && Instance != this && Instance.gameObject.scene == gameObject.scene)
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
         if (enemigo != null && enemigoEmpiezaOculto)
             enemigo.SetActive(false);
 
-        if (materialesEmpiezanOcultos && centroZonaEnemigo != null)
+        if (materialesEmpiezanOcultos && HayZona)
             RegistrarYOcultarMateriales();
     }
 
@@ -181,12 +183,12 @@ public class GameManager : MonoBehaviour
         if (salud == null)
             Debug.LogWarning("[GameManager] No hay ningún PlayerSalud en la escena: agregale el script al Player.", this);
 
-        if (enemigo != null && enemigoEmpiezaOculto && centroZonaEnemigo == null)
-            Debug.LogWarning("[GameManager] El enemigo empieza oculto y no hay 'Centro Zona Enemigo': recién va a aparecer al construir el puente.", this);
+        if (enemigo != null && enemigoEmpiezaOculto && !HayZona)
+            Debug.LogWarning("[GameManager] El enemigo empieza oculto y no hay zona ('Zona Activacion Enemigo' ni 'Centro Zona Enemigo'): recién va a aparecer al construir el puente.", this);
 
         ValidarMateriales();
 
-        Debug.Log($"[GameManager] Escena '{SceneManager.GetActiveScene().name}' lista | zona: {(centroZonaEnemigo != null ? "sí" : "NO")} | enemigo: {(enemigo != null ? "sí" : "NO")} | troncos y sogas ocultos: {materialesOcultos.Count} | río: {(nivelDelAgua != null ? "sí" : "NO")}", this);
+        Debug.Log($"[GameManager] Escena '{SceneManager.GetActiveScene().name}' lista | zona: {(HayZona ? "sí" : "NO")} | enemigo: {(enemigo != null ? "sí" : "NO")} | troncos y sogas ocultos: {materialesOcultos.Count} | río: {(nivelDelAgua != null ? "sí" : "NO")}", this);
 
         ReaparecerJugador();
     }
@@ -268,8 +270,6 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("[GameManager] Falta asignar 'Puente Construido' en el Inspector.", this);
         }
 
-        if (bloqueoDePaso != null) bloqueoDePaso.SetActive(false);
-
         if (sonidoConstruccion != null)
         {
             Vector3 posicion = puenteConstruido != null ? puenteConstruido.transform.position : transform.position;
@@ -313,35 +313,13 @@ public class GameManager : MonoBehaviour
 
     private void ChequearZonaEnemigo()
     {
-        if (zonaUsada || centroZonaEnemigo == null || puenteHabilitado || salud == null) return;
+        if (zonaUsada || !HayZona || puenteHabilitado || salud == null) return;
         if (Time.time < proximoChequeoZona) return;
         proximoChequeoZona = Time.time + 0.2f;
 
         Transform jugador = salud.transform;
-        Vector3 plano = jugador.position - centroZonaEnemigo.position;
-        plano.y = 0f;
 
-        float distanciaPlano = plano.magnitude;
-
-        if (distanciaPlano > radioZonaEnemigo)
-        {
-            if (mostrarDebugZona && distanciaPlano <= radioZonaEnemigo * 2f && Time.time >= proximoDebugZona)
-            {
-                proximoDebugZona = Time.time + 2f;
-                Debug.Log($"[GameManager] Cerca de la zona pero fuera del radio: estás a {distanciaPlano:0.#} m del centro y el radio es {radioZonaEnemigo:0.#} m.", this);
-            }
-            return;
-        }
-
-        if (puntoQueDebeMirar != null && !JugadorMiraElPunto(jugador))
-        {
-            if (mostrarDebugZona && Time.time >= proximoDebugZona)
-            {
-                proximoDebugZona = Time.time + 2f;
-                Debug.Log($"[GameManager] Dentro de la zona, pero todavía no ve el puente: {motivoNoVe}.", this);
-            }
-            return;
-        }
+        if (!JugadorActivaLaZona(jugador)) return;
 
         zonaUsada = true;
         Debug.Log("[GameManager] Zona del enemigo activada.", this);
@@ -356,6 +334,75 @@ public class GameManager : MonoBehaviour
             Vector3 posicion = Camera.main != null ? Camera.main.transform.position : jugador.position;
             AudioSource.PlayClipAtPoint(sonidoAparicion, posicion, volumenAparicion);
         }
+    }
+
+    private bool JugadorActivaLaZona(Transform jugador)
+    {
+        if (zonaActivacionEnemigo != null)
+            return JugadorEnZonaCaja(jugador);
+
+        Vector3 plano = jugador.position - centroZonaEnemigo.position;
+        plano.y = 0f;
+
+        float distanciaPlano = plano.magnitude;
+
+        if (distanciaPlano > radioZonaEnemigo)
+        {
+            if (mostrarDebugZona && distanciaPlano <= radioZonaEnemigo * 2f && Time.time >= proximoDebugZona)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.Log($"[GameManager] Cerca de la zona pero fuera del radio: estás a {distanciaPlano:0.#} m del centro y el radio es {radioZonaEnemigo:0.#} m.", this);
+            }
+            return false;
+        }
+
+        if (puntoQueDebeMirar != null && !JugadorMiraElPunto(jugador))
+        {
+            if (mostrarDebugZona && Time.time >= proximoDebugZona)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.Log($"[GameManager] Dentro de la zona, pero todavía no ve el puente: {motivoNoVe}.", this);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool JugadorEnZonaCaja(Transform jugador)
+    {
+        if (!zonaActivacionEnemigo.enabled || !zonaActivacionEnemigo.gameObject.activeInHierarchy)
+        {
+            if (mostrarDebugZona && Time.time >= proximoDebugZona)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.LogWarning("[GameManager] El collider de 'Zona Activacion Enemigo' está desactivado: tiene que estar tildado y el objeto activo.", this);
+            }
+            return false;
+        }
+
+        Vector3 pies = jugador.position;
+        Vector3 centro = controllerJugador != null ? controllerJugador.bounds.center : pies + Vector3.up;
+
+        if (PuntoEnZona(pies) || PuntoEnZona(centro)) return true;
+
+        if (mostrarDebugZona && Time.time >= proximoDebugZona)
+        {
+            float distancia = Vector3.Distance(zonaActivacionEnemigo.ClosestPoint(centro), centro);
+
+            if (distancia <= 15f)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.Log($"[GameManager] Te faltan {distancia:0.#} m para entrar en la zona del enemigo.", this);
+            }
+        }
+
+        return false;
+    }
+
+    private bool PuntoEnZona(Vector3 punto)
+    {
+        return (zonaActivacionEnemigo.ClosestPoint(punto) - punto).sqrMagnitude < 0.0001f;
     }
 
     private bool JugadorMiraElPunto(Transform jugador)
@@ -408,6 +455,14 @@ public class GameManager : MonoBehaviour
             Gizmos.color = new Color(0.2f, 0.6f, 1f, 1f);
             Vector3 centroAgua = nivelDelAgua.position + Vector3.down * profundidadParaMorir;
             Gizmos.DrawWireCube(centroAgua, new Vector3(60f, 0f, 60f));
+        }
+
+        if (zonaActivacionEnemigo != null)
+        {
+            Gizmos.color = Color.yellow;
+            Bounds caja = zonaActivacionEnemigo.bounds;
+            Gizmos.DrawWireCube(caja.center, caja.size);
+            return;
         }
 
         if (centroZonaEnemigo == null) return;

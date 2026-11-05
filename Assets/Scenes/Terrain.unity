@@ -13326,37 +13326,6 @@ Transform:
   - {fileID: 878310342}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &781793156
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 781793157}
-  m_Layer: 0
-  m_Name: MirarPuente
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &781793157
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 781793156}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 92.29, y: 13.32, z: 215.33}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &784787070
 GameObject:
   m_ObjectHideFlags: 0
@@ -13668,7 +13637,7 @@ GameObject:
   - component: {fileID: 866151518}
   - component: {fileID: 866151519}
   m_Layer: 0
-  m_Name: CentroZona
+  m_Name: ZonaEnemigo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13682,13 +13651,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 866151517}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.13018, z: 0, w: 0.99149036}
-  m_LocalPosition: {x: 92.66, y: 10.59, z: 192.66}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0.056334414, z: -0, w: 0.99841195}
+  m_LocalPosition: {x: 95.25599, y: 10.9, z: 197.04407}
+  m_LocalScale: {x: 1, y: 1.7783, z: 1.6395}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -14.96, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -6.459, z: 0}
 --- !u!65 &866151519
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20874,7 +20843,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6341600354384824818, guid: bc7f04fc35601434186c6a76a2b55164, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.032982
+      value: -48.71
       objectReference: {fileID: 0}
     - target: {fileID: 6341600354384824818, guid: bc7f04fc35601434186c6a76a2b55164, type: 3}
       propertyPath: m_LocalPosition.y
@@ -20882,7 +20851,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6341600354384824818, guid: bc7f04fc35601434186c6a76a2b55164, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -47.64978
+      value: -39.79
       objectReference: {fileID: 0}
     - target: {fileID: 6341600354384824818, guid: bc7f04fc35601434186c6a76a2b55164, type: 3}
       propertyPath: m_LocalRotation.w
@@ -21924,7 +21893,7 @@ PrefabInstance:
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: centroZonaEnemigo
       value: 
-      objectReference: {fileID: 866151518}
+      objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: mensajeInicioCaza
       value: "El puente est\xE1 listo... y algo viene por vos..."
@@ -21932,7 +21901,7 @@ PrefabInstance:
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: puntoQueDebeMirar
       value: 
-      objectReference: {fileID: 781793157}
+      objectReference: {fileID: 0}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: troncosNecesarios
       value: 5
@@ -21949,6 +21918,10 @@ PrefabInstance:
       propertyPath: distanciaMaximaVision
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
+      propertyPath: zonaActivacionEnemigo
+      value: 
+      objectReference: {fileID: 866151519}
     - target: {fileID: 9145462151273335666, guid: d6949d0e2f219c741a8f4d29355632f4, type: 3}
       propertyPath: capasObstaculos.m_Bits
       value: 4087
@@ -26245,4 +26218,3 @@ SceneRoots:
   - {fileID: 1069831249}
   - {fileID: 1924567083}
   - {fileID: 866151518}
-  - {fileID: 781793157}
