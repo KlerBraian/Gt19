@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -13,8 +15,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Color colorNormal = Color.white;
     [SerializeField] private Color colorAlarma = Color.red;
 
-    [Header("Puente (troncos y cuerdas)")]
-    [SerializeField] private int totalObjetosNecesarios = 5;
+    [Header("Puente (troncos y sogas)")]
+    [SerializeField] private int troncosNecesarios = 3;
+    [SerializeField] private int sogasNecesarias = 3;
     [SerializeField] private GameObject puenteConstruido;
     [SerializeField] private GameObject bloqueoDePaso;
     [SerializeField] private AudioClip sonidoConstruccion;
@@ -26,6 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip sonidoInicioCaza;
     [SerializeField, Range(0f, 1f)] private float volumenInicioCaza = 0.9f;
     [SerializeField] private float retrasoSonidoCaza = 1.5f;
+    [SerializeField] private bool ocultarEnemigoAlReaparecer = true;
 
     [Header("Zona donde aparece el enemigo")]
     [SerializeField] private Transform centroZonaEnemigo;
@@ -38,6 +42,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string mensajeAparicion = "Del otro lado del río se oye algo moverse...";
     [SerializeField] private AudioClip sonidoAparicion;
     [SerializeField, Range(0f, 1f)] private float volumenAparicion = 0.8f;
+    [SerializeField] private bool mostrarDebugZona = true;
+
+    [Header("Troncos y sogas (aparecen junto con el enemigo)")]
+    [SerializeField] private bool materialesEmpiezanOcultos = true;
+
+    [Header("Río")]
+    [SerializeField] private Transform nivelDelAgua;
+    [SerializeField] private float profundidadParaMorir = 0.3f;
+    [SerializeField] private string mensajeAhogado = "¡Te ahogaste en el río!";
 
     [Header("Punto de aparición (la vida y el daño están en PlayerSalud)")]
     [SerializeField] private Transform puntoReaparicion;
@@ -52,35 +65,101 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textoObjetos;
     [SerializeField] private TextMeshProUGUI textoAviso;
     [SerializeField] private TextMeshProUGUI textoObjetivos;
+    [SerializeField] private TextMeshProUGUI textoFusible;
+    [SerializeField] private Image iconoFusible;
+    [SerializeField] private Color colorFusibleFaltante = new Color(1f, 1f, 1f, 0.3f);
+    [SerializeField] private Color colorFusibleObtenido = Color.white;
 
     private float tiempoRestante;
     private int segundoMostrado = -1;
     private bool partidaTerminada;
-    private int objetosRecolectados;
+    private int troncosRecolectados;
+    private int sogasRecolectadas;
+    private float proximoDebugZona;
+    private string motivoNoVe = "";
+    private readonly List<GameObject> materialesOcultos = new List<GameObject>();
     private bool puenteHabilitado;
     private bool tieneFusible;
     private bool zonaUsada;
     private float proximoChequeoZona;
     private PlayerSalud salud;
     private CharacterController controllerJugador;
+    private Vector3 posicionInicialEnemigo;
+    private Quaternion rotacionInicialEnemigo;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance != null && Instance != this && Instance.gameObject.scene == gameObject.scene)
         {
             Destroy(gameObject);
             return;
         }
         Instance = this;
 
+        if (enemigo != null)
+        {
+            posicionInicialEnemigo = enemigo.transform.position;
+            rotacionInicialEnemigo = enemigo.transform.rotation;
+        }
+
         if (enemigo != null && enemigoEmpiezaOculto)
             enemigo.SetActive(false);
+
+        if (materialesEmpiezanOcultos && centroZonaEnemigo != null)
+            RegistrarYOcultarMateriales();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    private void RegistrarYOcultarMateriales()
+    {
+        materialesOcultos.Clear();
+
+        Interactuable[] todos = FindObjectsByType<Interactuable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (Interactuable item in todos)
+        {
+            if (item.Tipo != TipoInteraccion.Tronco && item.Tipo != TipoInteraccion.Soga) continue;
+
+            materialesOcultos.Add(item.gameObject);
+            item.gameObject.SetActive(false);
+        }
+    }
+
+    private void PonerMateriales(bool visibles)
+    {
+        foreach (GameObject material in materialesOcultos)
+            if (material != null) material.SetActive(visibles);
+    }
+
+    private void ValidarMateriales()
+    {
+        Interactuable[] todos = FindObjectsByType<Interactuable>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int troncos = 0;
+        int sogas = 0;
+
+        foreach (Interactuable item in todos)
+        {
+            if (item.Tipo == TipoInteraccion.Tronco) troncos++;
+            else if (item.Tipo == TipoInteraccion.Soga) sogas++;
+        }
+
+        if (troncos < troncosNecesarios)
+            Debug.LogWarning($"[GameManager] Hay {troncos} troncos en la escena y se necesitan {troncosNecesarios}: el puente no se va a poder construir.", this);
+
+        if (sogas < sogasNecesarias)
+            Debug.LogWarning($"[GameManager] Hay {sogas} sogas en la escena y se necesitan {sogasNecesarias}: el puente no se va a poder construir. Revisá que cada soga tenga Interactuable con Tipo = Soga.", this);
     }
 
     private void Start()
     {
+        Time.timeScale = 1f;
         tiempoRestante = minutosDuracion * 60f;
         ActualizarUIObjetos();
+        ActualizarUIFusible();
         ActualizarUIObjetivos();
 
         if (textoAviso != null) textoAviso.gameObject.SetActive(false);
@@ -105,6 +184,10 @@ public class GameManager : MonoBehaviour
         if (enemigo != null && enemigoEmpiezaOculto && centroZonaEnemigo == null)
             Debug.LogWarning("[GameManager] El enemigo empieza oculto y no hay 'Centro Zona Enemigo': recién va a aparecer al construir el puente.", this);
 
+        ValidarMateriales();
+
+        Debug.Log($"[GameManager] Escena '{SceneManager.GetActiveScene().name}' lista | zona: {(centroZonaEnemigo != null ? "sí" : "NO")} | enemigo: {(enemigo != null ? "sí" : "NO")} | troncos y sogas ocultos: {materialesOcultos.Count} | río: {(nivelDelAgua != null ? "sí" : "NO")}", this);
+
         ReaparecerJugador();
     }
 
@@ -123,17 +206,47 @@ public class GameManager : MonoBehaviour
         }
 
         ActualizarUITimer();
+
+        ChequearAgua();
+        if (partidaTerminada) return;
+
         ChequearZonaEnemigo();
     }
 
-    public void RecolectarMaterialPuente()
+    private void ChequearAgua()
+    {
+        if (nivelDelAgua == null) return;
+
+        float alturaPies;
+        if (controllerJugador != null) alturaPies = controllerJugador.bounds.min.y;
+        else if (salud != null) alturaPies = salud.transform.position.y;
+        else return;
+
+        if (alturaPies < nivelDelAgua.position.y - profundidadParaMorir)
+            Derrota(mensajeAhogado);
+    }
+
+    public void RecolectarTronco()
     {
         if (partidaTerminada || puenteHabilitado) return;
 
-        objetosRecolectados++;
+        troncosRecolectados++;
+        ProgresoDelPuente();
+    }
+
+    public void RecolectarSoga()
+    {
+        if (partidaTerminada || puenteHabilitado) return;
+
+        sogasRecolectadas++;
+        ProgresoDelPuente();
+    }
+
+    private void ProgresoDelPuente()
+    {
         ActualizarUIObjetos();
 
-        if (objetosRecolectados >= totalObjetosNecesarios)
+        if (troncosRecolectados >= troncosNecesarios && sogasRecolectadas >= sogasNecesarias)
             HabilitarPuente();
 
         ActualizarUIObjetivos();
@@ -176,6 +289,8 @@ public class GameManager : MonoBehaviour
     {
         if (partidaTerminada) return false;
 
+        PonerMateriales(true);
+
         if (enemigo == null)
         {
             Debug.LogWarning("[GameManager] Falta arrastrar al enemigo al campo 'Enemigo'.", this);
@@ -206,13 +321,32 @@ public class GameManager : MonoBehaviour
         Vector3 plano = jugador.position - centroZonaEnemigo.position;
         plano.y = 0f;
 
-        if (plano.sqrMagnitude > radioZonaEnemigo * radioZonaEnemigo) return;
-        if (puntoQueDebeMirar != null && !JugadorMiraElPunto(jugador)) return;
+        float distanciaPlano = plano.magnitude;
+
+        if (distanciaPlano > radioZonaEnemigo)
+        {
+            if (mostrarDebugZona && distanciaPlano <= radioZonaEnemigo * 2f && Time.time >= proximoDebugZona)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.Log($"[GameManager] Cerca de la zona pero fuera del radio: estás a {distanciaPlano:0.#} m del centro y el radio es {radioZonaEnemigo:0.#} m.", this);
+            }
+            return;
+        }
+
+        if (puntoQueDebeMirar != null && !JugadorMiraElPunto(jugador))
+        {
+            if (mostrarDebugZona && Time.time >= proximoDebugZona)
+            {
+                proximoDebugZona = Time.time + 2f;
+                Debug.Log($"[GameManager] Dentro de la zona, pero todavía no ve el puente: {motivoNoVe}.", this);
+            }
+            return;
+        }
 
         zonaUsada = true;
         Debug.Log("[GameManager] Zona del enemigo activada.", this);
 
-        if (!ActivarEnemigo()) return;
+        ActivarEnemigo();
 
         if (!string.IsNullOrEmpty(mensajeAparicion))
             MostrarAviso(mensajeAparicion);
@@ -232,12 +366,25 @@ public class GameManager : MonoBehaviour
         Vector3 posicionPunto = puntoQueDebeMirar.position;
         Vector3 enPantalla = camara.WorldToViewportPoint(posicionPunto);
 
-        if (enPantalla.z <= 0f || enPantalla.z > distanciaMaximaVision) return false;
+        if (enPantalla.z <= 0f)
+        {
+            motivoNoVe = "el punto está detrás de la cámara";
+            return false;
+        }
+
+        if (enPantalla.z > distanciaMaximaVision)
+        {
+            motivoNoVe = $"el punto está a {enPantalla.z:0.#} m de la cámara y el máximo es {distanciaMaximaVision:0.#} m";
+            return false;
+        }
 
         float minimo = margenPantalla;
         float maximo = 1f - margenPantalla;
         if (enPantalla.x < minimo || enPantalla.x > maximo || enPantalla.y < minimo || enPantalla.y > maximo)
+        {
+            motivoNoVe = $"el punto no está en pantalla (x {enPantalla.x:0.00}, y {enPantalla.y:0.00}; tienen que estar entre {minimo:0.00} y {maximo:0.00})";
             return false;
+        }
 
         Vector3 origen = jugador.position + Vector3.up * alturaOjos;
         Vector3 haciaPunto = posicionPunto - origen;
@@ -245,11 +392,24 @@ public class GameManager : MonoBehaviour
 
         if (distancia <= 0.75f) return true;
 
-        return !Physics.Raycast(origen, haciaPunto / distancia, distancia - 0.75f, capasObstaculos, QueryTriggerInteraction.Ignore);
+        if (Physics.Raycast(origen, haciaPunto / distancia, out RaycastHit golpe, distancia - 0.75f, capasObstaculos, QueryTriggerInteraction.Ignore))
+        {
+            motivoNoVe = $"'{golpe.collider.name}' tapa la vista";
+            return false;
+        }
+
+        return true;
     }
 
     private void OnDrawGizmosSelected()
     {
+        if (nivelDelAgua != null)
+        {
+            Gizmos.color = new Color(0.2f, 0.6f, 1f, 1f);
+            Vector3 centroAgua = nivelDelAgua.position + Vector3.down * profundidadParaMorir;
+            Gizmos.DrawWireCube(centroAgua, new Vector3(60f, 0f, 60f));
+        }
+
         if (centroZonaEnemigo == null) return;
 
         Gizmos.color = Color.yellow;
@@ -264,15 +424,26 @@ public class GameManager : MonoBehaviour
     private void ActualizarUIObjetos()
     {
         if (textoObjetos != null)
-            textoObjetos.text = $"Materiales: {objetosRecolectados}/{totalObjetosNecesarios}";
+            textoObjetos.text = $"Troncos: {Mathf.Min(troncosRecolectados, troncosNecesarios)}/{troncosNecesarios} - Sogas: {Mathf.Min(sogasRecolectadas, sogasNecesarias)}/{sogasNecesarias}";
     }
 
     public void RecolectarFusible()
     {
         if (partidaTerminada) return;
         tieneFusible = true;
+        ActualizarUIFusible();
         ActualizarUIObjetivos();
     }
+
+    private void ActualizarUIFusible()
+    {
+        if (textoFusible != null)
+            textoFusible.text = tieneFusible ? "Fusible: 1/1" : "Fusible: 0/1";
+
+        if (iconoFusible != null)
+            iconoFusible.color = tieneFusible ? colorFusibleObtenido : colorFusibleFaltante;
+    }
+
     public void IntentarEscapar()
     {
         if (partidaTerminada) return;
@@ -329,12 +500,42 @@ public class GameManager : MonoBehaviour
         bool recibioDaño = salud.RecibirDaño(salud.DañoPorGolpe);
 
         if (recibioDaño && !salud.EstaMuerto && reaparecerAlPerderVida)
+        {
             ReaparecerJugador();
+            Invoke(nameof(RearmarEnemigo), 0.1f);
+        }
+    }
+
+    private void RearmarEnemigo()
+    {
+        if (!ocultarEnemigoAlReaparecer || puenteHabilitado || partidaTerminada) return;
+
+        bool reinicioAlgo = false;
+
+        if (enemigo != null && enemigoEmpiezaOculto)
+        {
+            enemigo.SetActive(false);
+            enemigo.transform.SetPositionAndRotation(posicionInicialEnemigo, rotacionInicialEnemigo);
+            reinicioAlgo = true;
+        }
+
+        if (materialesOcultos.Count > 0)
+        {
+            PonerMateriales(false);
+            reinicioAlgo = true;
+        }
+
+        if (!reinicioAlgo) return;
+
+        zonaUsada = false;
+        proximoChequeoZona = 0f;
+
+        Debug.Log("[GameManager] Enemigo, troncos y sogas ocultos otra vez: la zona vuelve a estar lista.", this);
     }
 
     public void JugadorMurio()
     {
-        Derrota("¡Moriste!");
+        Derrota("¡El bicho te mató!");
     }
 
     private void ActualizarUIObjetivos()
@@ -343,7 +544,7 @@ public class GameManager : MonoBehaviour
 
         bool hayActivo = false;
         string texto = "<b>OBJETIVOS</b>\n";
-        texto += LineaObjetivo($"Juntar materiales del puente ({objetosRecolectados}/{totalObjetosNecesarios})", puenteHabilitado, ref hayActivo);
+        texto += LineaObjetivo($"Juntar troncos ({Mathf.Min(troncosRecolectados, troncosNecesarios)}/{troncosNecesarios}) y sogas ({Mathf.Min(sogasRecolectadas, sogasNecesarias)}/{sogasNecesarias}) para el puente", puenteHabilitado, ref hayActivo);
         texto += LineaObjetivo("Cruzar el puente y encontrar el fusible", tieneFusible, ref hayActivo);
         texto += LineaObjetivo("Activar la radio en la torre", false, ref hayActivo);
 
@@ -371,7 +572,6 @@ public class GameManager : MonoBehaviour
         controllerJugador.transform.position = puntoReaparicion.position;
         controllerJugador.enabled = true;
     }
-
 
     private void Victoria()
     {

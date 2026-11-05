@@ -2,31 +2,28 @@ using UnityEngine;
 
 public enum TipoInteraccion
 {
-    MaterialPuente, // tronco o cuerda: suma al contador del puente
-    Fusible,        // habilita el escape en la torre
-    Escape,         // botón de la torre: gana si tenés el fusible
-    Puerta          // se abre y se cierra
+    Tronco,
+    Fusible,
+    Escape,
+    Puerta,
+    Soga
 }
+
 public class Interactuable : MonoBehaviour
 {
-    [SerializeField] private TipoInteraccion tipo = TipoInteraccion.MaterialPuente;
+    [SerializeField] private TipoInteraccion tipo = TipoInteraccion.Tronco;
 
     [Header("Prompt")]
     [SerializeField] private string textoPrompt = "Presioná E para interactuar";
-    [Tooltip("Solo puerta: texto mientras está abierta")]
     [SerializeField] private string textoPromptCerrar = "Presioná E para cerrar la puerta";
 
     [Header("Opcional")]
-    [Tooltip("Sonido al recoger, usar o abrir")]
     [SerializeField] private AudioClip sonido;
-    [Tooltip("Solo puerta: sonido al cerrar")]
     [SerializeField] private AudioClip sonidoAlCerrar;
     [SerializeField] private GameObject efectoParticulas;
 
     [Header("Solo puerta")]
-    [Tooltip("Grados por segundo")]
     [SerializeField] private float velocidad = 100f;
-    [Tooltip("Cuántos grados gira al abrirse (probá con -90 si abre para el lado equivocado)")]
     [SerializeField] private float anguloApertura = 90f;
 
     private bool abierta;
@@ -34,17 +31,18 @@ public class Interactuable : MonoBehaviour
     private float anguloObjetivo;
     private Quaternion rotacionInicial;
 
+    public TipoInteraccion Tipo => tipo;
+
     private void Awake()
     {
         rotacionInicial = transform.localRotation;
-
         enabled = false;
     }
 
     private void Update()
     {
         anguloActual = Mathf.MoveTowards(anguloActual, anguloObjetivo, velocidad * Time.deltaTime);
-        transform.localRotation = rotacionInicial * Quaternion.Euler(0f,anguloActual, 0f);
+        transform.localRotation = rotacionInicial * Quaternion.Euler(0f, anguloActual, 0f);
 
         if (Mathf.Approximately(anguloActual, anguloObjetivo))
             enabled = false;
@@ -74,11 +72,19 @@ public class Interactuable : MonoBehaviour
             case TipoInteraccion.Escape:
                 gm.IntentarEscapar();
                 return;
+
+            case TipoInteraccion.Fusible:
+                gm.RecolectarFusible();
+                break;
+
+            case TipoInteraccion.Tronco:
+                gm.RecolectarTronco();
+                break;
+
+            case TipoInteraccion.Soga:
+                gm.RecolectarSoga();
+                break;
         }
-        if (tipo == TipoInteraccion.Fusible)
-            gm.RecolectarFusible();
-        else
-            gm.RecolectarMaterialPuente();
 
         Efectos(sonido, true);
         Destroy(gameObject);
@@ -89,7 +95,7 @@ public class Interactuable : MonoBehaviour
         abierta = !abierta;
         anguloObjetivo = abierta ? anguloApertura : 0f;
         Efectos(abierta ? sonido : sonidoAlCerrar, abierta);
-        enabled = true; // arranca el Update para animar el giro
+        enabled = true;
     }
 
     private void Efectos(AudioClip clip, bool conParticulas)
